@@ -1,181 +1,249 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-
-import { MonthNavigator } from "./MonthNavigator";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCalendarStore } from "@/store/calendarStore";
 import { useThemeStore } from "@/store/themeStore";
-import { cn } from "@/lib/utils";
-
-interface CalendarHeaderProps {
-  className?: string;
-}
 
 const MONTH_NAMES = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
 ] as const;
 
-export function CalendarHeader({ className }: CalendarHeaderProps) {
+export function CalendarHeader({ className = "" }: { className?: string }) {
   const activeMonthIndex = useCalendarStore((s) => s.activeMonthIndex);
   const activeYear = useCalendarStore((s) => s.activeYear);
+  const goToNextMonth = useCalendarStore((s) => s.goToNextMonth);
+  const goToPrevMonth = useCalendarStore((s) => s.goToPrevMonth);
   const selectedRange = useCalendarStore((s) => s.selectedRange);
-
   const activeTheme = useThemeStore((s) => s.activeTheme);
   const syncThemeToMonth = useThemeStore((s) => s.syncThemeToMonth);
 
+  const [direction, setDirection] = useState(1);
+  const [displayMonth, setDisplayMonth] = useState(activeMonthIndex);
+  const prevMonth = useRef(activeMonthIndex);
+
   useEffect(() => {
     syncThemeToMonth(activeMonthIndex);
+    const d = activeMonthIndex > prevMonth.current ? 1 : -1;
+    setDirection(d);
+    setDisplayMonth(activeMonthIndex);
+    prevMonth.current = activeMonthIndex;
   }, [activeMonthIndex, syncThemeToMonth]);
-
-  const monthLabel = MONTH_NAMES[activeMonthIndex];
 
   const selectionLabel = useMemo(() => {
     const { start, end } = selectedRange;
-    if (!start || !end) return "select a start and end date";
-
-    const fmt = new Intl.DateTimeFormat("en-IN", {
-      month: "short",
-      day: "numeric",
-    });
-
-    return `${fmt.format(start)} → ${fmt.format(end)}`;
+    if (!start || !end) return null;
+    const fmt = new Intl.DateTimeFormat("en-IN", { month: "short", day: "numeric" });
+    return `${fmt.format(start)} — ${fmt.format(end)}`;
   }, [selectedRange]);
 
+  const handleNext = () => {
+    setDirection(1);
+    goToNextMonth();
+  };
+
+  const handlePrev = () => {
+    setDirection(-1);
+    goToPrevMonth();
+  };
+
   return (
-    <header
-      className={cn(
-        "relative overflow-hidden rounded-[2rem] border px-5 py-5 md:px-7 md:py-6",
-        "shadow-[0_18px_60px_rgba(0,0,0,0.18)]",
-        className
-      )}
-      style={{
-        background: "var(--theme-surface)",
-        borderColor: "var(--theme-border)",
-      }}
-    >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-60"
-        style={{
-          background:
-            "radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 30%), radial-gradient(circle at bottom right, rgba(255,255,255,0.05), transparent 34%)",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
-        style={{
-          background:
-            "linear-gradient(to right, transparent, var(--theme-accent), transparent)",
-        }}
-      />
-
-      <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div className="max-w-3xl space-y-3">
-          <div className="flex flex-wrap items-center gap-3">
-            <span
-              className="text-[10px] font-semibold uppercase tracking-[0.45em]"
-              style={{ color: "var(--theme-text-muted)" }}
-            >
-              wall calendar
-            </span>
-
-            <span
-              className="rounded-full border px-3 py-1 text-[10px] font-medium uppercase tracking-[0.28em]"
+    <header className={`relative flex items-center justify-between gap-4 px-1 ${className}`}>
+      {/* Left: Film info */}
+      <div className="flex items-center gap-4 min-w-0">
+        {/* Reel icon */}
+        <div
+          className="hidden md:flex items-center justify-center flex-shrink-0"
+          style={{
+            width: "36px",
+            height: "36px",
+            borderRadius: "50%",
+            border: `1.5px solid ${activeTheme.colors.border}`,
+            position: "relative",
+            transition: "border-color 0.8s ease",
+          }}
+        >
+          <div style={{
+            width: "10px",
+            height: "10px",
+            borderRadius: "50%",
+            backgroundColor: activeTheme.colors.accent,
+            transition: "background-color 0.8s ease",
+          }} />
+          {[0, 60, 120, 180, 240, 300].map((deg) => (
+            <div
+              key={deg}
               style={{
-                borderColor: "var(--theme-border)",
-                color: "var(--theme-text-muted)",
+                position: "absolute",
+                width: "5px",
+                height: "5px",
+                borderRadius: "50%",
+                backgroundColor: activeTheme.colors.textMuted,
+                transform: `rotate(${deg}deg) translateY(-11px)`,
+                transition: "background-color 0.8s ease",
               }}
-            >
-              {activeTheme.filmTitle}
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <h1
-              className="text-4xl leading-none md:text-6xl"
-              style={{
-                fontFamily: "var(--font-display)",
-                color: "var(--theme-text)",
-              }}
-            >
-              {monthLabel}
-            </h1>
-
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm md:text-base">
-              <p
-                className="font-medium"
-                style={{ color: "var(--theme-text-muted)" }}
-              >
-                {activeTheme.director} · {activeYear}
-              </p>
-
-              <span
-                className="h-1 w-1 rounded-full"
-                style={{ background: "var(--theme-highlight)" }}
-              />
-
-              <p
-                className="max-w-xl italic"
-                style={{
-                  color: "var(--theme-text)",
-                  fontFamily: "var(--font-notes)",
-                }}
-              >
-                “{activeTheme.tagline}”
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] uppercase tracking-[0.28em]">
-            <span
-              className="rounded-full border px-3 py-1"
-              style={{
-                borderColor: "var(--theme-border)",
-                color: "var(--theme-text-muted)",
-              }}
-            >
-              {activeTheme.goldenDates.length} golden dates
-            </span>
-            <span
-              className="rounded-full border px-3 py-1"
-              style={{
-                borderColor: "var(--theme-border)",
-                color: "var(--theme-text-muted)",
-              }}
-            >
-              hover for trivia
-            </span>
-          </div>
-
-          <div
-            className="max-w-2xl rounded-2xl border px-4 py-3 text-sm leading-relaxed"
-            style={{
-              background:
-                "color-mix(in srgb, var(--theme-bg) 22%, transparent)",
-              borderColor: "var(--theme-border)",
-              color: "var(--theme-text-muted)",
-            }}
-          >
-            <span className="font-semibold uppercase tracking-[0.28em]">
-              selected range
-            </span>
-            <div className="mt-1" style={{ color: "var(--theme-text)" }}>
-              {selectionLabel}
-            </div>
-          </div>
+            />
+          ))}
         </div>
 
-        <MonthNavigator />
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className="text-[10px] font-bold tracking-[0.3em] uppercase"
+              style={{ color: activeTheme.colors.textMuted, transition: "color 0.8s ease" }}
+            >
+              CineCalendar
+            </span>
+            <span style={{ color: activeTheme.colors.border }}>·</span>
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={activeTheme.filmTitle}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.3 }}
+                className="text-[10px] tracking-[0.2em] uppercase truncate max-w-[160px] md:max-w-[280px]"
+                style={{ color: activeTheme.colors.highlight, transition: "color 0.8s ease" }}
+              >
+                {activeTheme.filmTitle}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+
+          {selectionLabel && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex items-center gap-1.5 mt-0.5"
+            >
+              <div
+                style={{
+                  width: "5px",
+                  height: "5px",
+                  borderRadius: "50%",
+                  backgroundColor: activeTheme.colors.accent,
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                className="text-[10px] tracking-[0.15em]"
+                style={{ color: activeTheme.colors.textMuted }}
+              >
+                {selectionLabel}
+              </span>
+            </motion.div>
+          )}
+        </div>
+      </div>
+
+      {/* Center: Animated month name */}
+      <div className="absolute left-1/2 -translate-x-1/2 text-center pointer-events-none select-none hidden md:block">
+        <div className="overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={activeMonthIndex}
+              custom={direction}
+              initial={{ y: direction > 0 ? 40 : -40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: direction > 0 ? -40 : 40, opacity: 0 }}
+              transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <h1
+                className="text-2xl md:text-3xl leading-none tracking-tight"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  color: activeTheme.colors.text,
+                  transition: "color 0.8s ease",
+                  letterSpacing: "-0.02em",
+                }}
+              >
+                {MONTH_NAMES[displayMonth]}
+              </h1>
+              <p
+                className="text-[10px] tracking-[0.3em] uppercase mt-0.5"
+                style={{ color: activeTheme.colors.textMuted }}
+              >
+                {activeYear} · {activeTheme.director}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Right: Navigation */}
+      <div className="flex items-center gap-1.5">
+        {/* Golden dates count */}
+        <div
+          className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full mr-2"
+          style={{
+            border: `1px solid ${activeTheme.colors.border}`,
+            transition: "border-color 0.8s ease",
+          }}
+        >
+          <span style={{
+            fontSize: "8px",
+            color: activeTheme.colors.highlight,
+          }}>✦</span>
+          <span
+            className="text-[10px] tracking-[0.2em] uppercase"
+            style={{ color: activeTheme.colors.textMuted }}
+          >
+            {activeTheme.goldenDates.length} golden
+          </span>
+        </div>
+
+        <button
+          onClick={handlePrev}
+          className="group flex items-center justify-center transition-all duration-200"
+          style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            border: `1px solid ${activeTheme.colors.border}`,
+            backgroundColor: "transparent",
+            color: activeTheme.colors.textMuted,
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = activeTheme.colors.surface;
+            (e.currentTarget as HTMLButtonElement).style.color = activeTheme.colors.text;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = activeTheme.colors.textMuted;
+          }}
+          aria-label="Previous month"
+        >
+          <ChevronLeft size={14} />
+        </button>
+
+        <button
+          onClick={handleNext}
+          className="group flex items-center justify-center transition-all duration-200"
+          style={{
+            width: "32px",
+            height: "32px",
+            borderRadius: "50%",
+            border: `1px solid ${activeTheme.colors.border}`,
+            backgroundColor: "transparent",
+            color: activeTheme.colors.textMuted,
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = activeTheme.colors.surface;
+            (e.currentTarget as HTMLButtonElement).style.color = activeTheme.colors.text;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = activeTheme.colors.textMuted;
+          }}
+          aria-label="Next month"
+        >
+          <ChevronRight size={14} />
+        </button>
       </div>
     </header>
   );

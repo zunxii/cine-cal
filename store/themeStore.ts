@@ -2,28 +2,34 @@ import { create } from "zustand";
 import { getThemeByMonth } from "@/data/theme";
 import type { FilmTheme, MonthIndex } from "@/types/theme";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 interface ThemeStore {
   activeTheme: FilmTheme;
   previousTheme: FilmTheme | null;
-  fontsLoaded: Set<string>;
-
-  // Actions
   syncThemeToMonth: (monthIndex: MonthIndex) => void;
-  markFontLoaded: (fontName: string) => void;
-  isFontLoaded: (fontName: string) => boolean;
 }
 
-// ─── CSS Custom Property Injection ────────────────────────────────────────────
+// Font family map per film — Google Fonts names exactly
+const FONT_MAP: Record<string, { display: string; body: string; notes: string }> = {
+  ddlj: { display: "Playfair Display", body: "Lora", notes: "Kalam" },
+  kkhh: { display: "Bebas Neue", body: "Nunito", notes: "Kalam" },
+  rdb: { display: "Oswald", body: "Source Sans 3", notes: "Kalam" },
+  gow: { display: "Teko", body: "Barlow", notes: "Kalam" },
+  satya: { display: "Bebas Neue", body: "Barlow Condensed", notes: "Kalam" },
+  devdas: { display: "Playfair Display", body: "EB Garamond", notes: "Kalam" },
+  jthj: { display: "Oswald", body: "Raleway", notes: "Kalam" },
+  lagaan: { display: "Teko", body: "Source Sans 3", notes: "Kalam" },
+  "three-idiots": { display: "Nunito", body: "Nunito", notes: "Kalam" },
+  "mughal-e-azam": { display: "Playfair Display", body: "EB Garamond", notes: "Kalam" },
+  "dil-chahta-hai": { display: "Bebas Neue", body: "Raleway", notes: "Kalam" },
+  bajirao: { display: "Playfair Display", body: "EB Garamond", notes: "Kalam" },
+};
 
-function injectThemeCSSVars(theme: FilmTheme): void {
+export function injectThemeCSSVars(theme: FilmTheme): void {
   if (typeof document === "undefined") return;
 
   const root = document.documentElement;
-  const { colors, fonts } = theme;
+  const { colors } = theme;
 
-  // Color tokens
   root.style.setProperty("--theme-bg", colors.bg);
   root.style.setProperty("--theme-surface", colors.surface);
   root.style.setProperty("--theme-accent", colors.accent);
@@ -34,59 +40,36 @@ function injectThemeCSSVars(theme: FilmTheme): void {
   root.style.setProperty("--theme-highlight", colors.highlight);
   root.style.setProperty("--theme-hero-overlay", colors.heroOverlay);
   root.style.setProperty("--theme-hero-gradient", theme.heroGradient);
+  root.style.setProperty("--theme-grayscale", theme.startsGrayscale ? "1" : "0");
 
-  // Film grain opacity per intensity level
-  const grainOpacity = {
-    none: "0",
-    subtle: "0.03",
-    medium: "0.06",
-    heavy: "0.12",
-  }[theme.grain];
+  const grainOpacity = { none: "0", subtle: "0.03", medium: "0.06", heavy: "0.12" }[theme.grain];
   root.style.setProperty("--theme-grain-opacity", grainOpacity);
 
-  // Font family vars — components use font-[var(--font-display)] etc.
-  root.style.setProperty("--font-display", `"${fonts.display}", serif`);
-  root.style.setProperty("--font-body", `"${fonts.body}", sans-serif`);
-  root.style.setProperty("--font-notes", `"${fonts.notes}", cursive`);
+  // Inject font vars
+  const fonts = FONT_MAP[theme.id] ?? FONT_MAP.ddlj;
+  root.style.setProperty("--font-display", `'${fonts.display}', serif`);
+  root.style.setProperty("--font-body", `'${fonts.body}', sans-serif`);
+  root.style.setProperty("--font-notes", `'${fonts.notes}', cursive`);
 
-  // Mughal-E-Azam grayscale flag
-  root.style.setProperty(
-    "--theme-grayscale",
-    theme.startsGrayscale ? "1" : "0"
-  );
+  // Also update body background directly for smooth transition
+  document.body.style.backgroundColor = colors.bg;
+  document.body.style.color = colors.text;
 }
-
-// ─── Store ────────────────────────────────────────────────────────────────────
 
 const initialTheme = getThemeByMonth(new Date().getMonth() as MonthIndex);
 
 export const useThemeStore = create<ThemeStore>()((set, get) => ({
   activeTheme: initialTheme,
   previousTheme: null,
-  fontsLoaded: new Set<string>(),
 
   syncThemeToMonth: (monthIndex: MonthIndex) => {
     const current = get().activeTheme;
     const next = getThemeByMonth(monthIndex);
-
     if (current.id === next.id) return;
-
     set({ previousTheme: current, activeTheme: next });
     injectThemeCSSVars(next);
   },
-
-  markFontLoaded: (fontName: string) => {
-    set((state) => ({
-      fontsLoaded: new Set([...state.fontsLoaded, fontName]),
-    }));
-  },
-
-  isFontLoaded: (fontName: string) => {
-    return get().fontsLoaded.has(fontName);
-  },
 }));
-
-// ─── Initialise CSS vars on first load (call once in root layout) ─────────────
 
 export function initThemeCSSVars(monthIndex: MonthIndex): void {
   injectThemeCSSVars(getThemeByMonth(monthIndex));

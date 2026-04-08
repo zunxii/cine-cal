@@ -1,253 +1,297 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCalendarStore } from "@/store/calendarStore";
 import { useThemeStore } from "@/store/themeStore";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 interface HeroPanelProps {
   className?: string;
 }
 
-type ThemeWithHero = ReturnType<typeof useThemeStore.getState>["activeTheme"] & {
-  heroImage?: string;
-  heroImageAlt?: string;
+// Curated cinematic images from Unsplash (reliable, no auth needed)
+const THEME_IMAGES: Record<string, string> = {
+  ddlj: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80", // Alps/mountains golden
+  kkhh: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=800&q=80", // forest light blue
+  rdb: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80", // amber dunes
+  gow: "https://images.unsplash.com/photo-1517315003714-a071486bd9ea?w=800&q=80", // dark industrial
+  satya: "https://images.unsplash.com/photo-1502920514313-52581002a659?w=800&q=80", // night city blue
+  devdas: "https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80", // purple flowers
+  jthj: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=800&q=80", // snowy Ladakh
+  lagaan: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80", // golden cricket field
+  "three-idiots": "https://images.unsplash.com/photo-1495653797063-114787b77b23?w=800&q=80", // teal Pangong
+  "mughal-e-azam": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80", // dark marble
+  "dil-chahta-hai": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80", // Goa beach
+  bajirao: "https://images.unsplash.com/photo-1477840539360-af932bfbc467?w=800&q=80", // golden palace
 };
 
 function formatShort(date: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    month: "short",
-    day: "numeric",
-  }).format(date);
+  return new Intl.DateTimeFormat("en-IN", { month: "short", day: "numeric" }).format(date);
 }
 
-export function HeroPanel({ className }: HeroPanelProps) {
-  const activeTheme = useThemeStore((s) => s.activeTheme) as ThemeWithHero;
+export function HeroPanel({ className = "" }: HeroPanelProps) {
+  const activeTheme = useThemeStore((s) => s.activeTheme);
   const activeMonthIndex = useCalendarStore((s) => s.activeMonthIndex);
   const activeYear = useCalendarStore((s) => s.activeYear);
   const selectedRange = useCalendarStore((s) => s.selectedRange);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [hoveredGolden, setHoveredGolden] = useState<number | null>(null);
 
-  const featuredGolden = activeTheme.goldenDates[0] ?? null;
+  const MONTH_NAMES = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
 
   const selectedLabel = useMemo(() => {
     const { start, end } = selectedRange;
     if (!start || !end) return null;
-    return `${formatShort(start)} → ${formatShort(end)}`;
+    return `${formatShort(start)} — ${formatShort(end)}`;
   }, [selectedRange]);
 
+  const imgSrc = THEME_IMAGES[activeTheme.id];
+  const featuredGolden = activeTheme.goldenDates[0] ?? null;
+  const hoveredGoldenData = hoveredGolden !== null
+    ? activeTheme.goldenDates.find(g => g.day === hoveredGolden)
+    : null;
+
   return (
-    <section
-      className={cn(
-        "relative overflow-hidden rounded-[2rem] border p-4 md:p-5",
-        "shadow-[0_20px_70px_rgba(0,0,0,0.18)]",
-        className
-      )}
-      style={{
-        background: "var(--theme-surface)",
-        borderColor: "var(--theme-border)",
-        color: "var(--theme-text)",
-      }}
-    >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-60"
+    <AnimatePresence mode="wait">
+      <motion.section
+        key={activeTheme.id}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`relative overflow-hidden ${className}`}
         style={{
-          background:
-            "radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 28%), radial-gradient(circle at bottom right, rgba(255,255,255,0.05), transparent 30%)",
+          borderRadius: "16px",
+          border: `1px solid ${activeTheme.colors.border}`,
+          backgroundColor: activeTheme.colors.surface,
+          transition: "border-color 0.8s ease, background-color 0.8s ease",
         }}
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-7"
-        style={{
-          background:
-            "linear-gradient(to bottom, rgba(255,255,255,0.08), transparent)",
-        }}
-      />
+      >
+        {/* Main hero image */}
+        <div className="relative" style={{ aspectRatio: "16/7", overflow: "hidden", borderRadius: "15px 15px 0 0" }}>
+          {/* Gradient base (shows before image loads or as fallback) */}
+          <div
+            className="absolute inset-0"
+            style={{ background: activeTheme.heroGradient, transition: "background 0.8s ease" }}
+          />
 
-      <div className="relative grid gap-5 md:grid-cols-[1.15fr_0.85fr] md:items-stretch">
-        {/* Visual anchor */}
-        <div className="overflow-hidden rounded-[1.6rem] border" style={{ borderColor: "var(--theme-border)" }}>
-          <div className="relative aspect-[1.35/1] w-full bg-[var(--theme-bg)]">
-            {activeTheme.heroImage ? (
-              <Image
-                src={activeTheme.heroImage}
-                alt={activeTheme.heroImageAlt ?? activeTheme.filmTitle}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div
-                className="absolute inset-0"
-                style={{ background: activeTheme.heroGradient }}
-              />
-            )}
-
-            <div
-              className="absolute inset-0"
+          {/* Actual image with cinematic overlay */}
+          {imgSrc && (
+            <img
+              src={imgSrc}
+              alt={activeTheme.filmTitle}
+              className="absolute inset-0 w-full h-full transition-opacity duration-700"
               style={{
-                background: activeTheme.colors.heroOverlay,
+                objectFit: "cover",
+                opacity: imgLoaded ? 1 : 0,
+                filter: activeTheme.startsGrayscale ? "grayscale(1) contrast(1.1)" : "none",
               }}
+              onLoad={() => setImgLoaded(true)}
             />
+          )}
 
-            <div className="absolute left-0 right-0 top-0 h-10 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.15),transparent)]" />
+          {/* Cinematic color overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: activeTheme.colors.heroOverlay,
+              mixBlendMode: "multiply",
+            }}
+          />
 
-            <div className="absolute left-4 top-3 flex items-center gap-1.5 opacity-85">
-              {Array.from({ length: 14 }).map((_, i) => (
-                <span
-                  key={i}
-                  className="h-2 w-1 rounded-sm"
-                  style={{
-                    background:
-                      i % 2 === 0
-                        ? "color-mix(in srgb, var(--theme-text) 62%, transparent)"
-                        : "color-mix(in srgb, var(--theme-text-muted) 40%, transparent)",
-                  }}
-                />
-              ))}
-            </div>
+          {/* Bottom fade */}
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{
+              height: "70%",
+              background: `linear-gradient(to bottom, transparent, ${activeTheme.colors.surface}ee)`,
+              transition: "background 0.8s ease",
+            }}
+          />
 
-            <div className="absolute inset-x-0 bottom-0 p-4">
+          {/* Film perforation holes - sides */}
+          <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-evenly py-2 pl-1.5">
+            {Array.from({ length: 8 }).map((_, i) => (
               <div
-                className="inline-flex rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.35em]"
+                key={i}
                 style={{
-                  borderColor: "rgba(255,255,255,0.18)",
-                  color: "rgba(255,255,255,0.85)",
-                  background: "rgba(0,0,0,0.18)",
+                  width: "8px",
+                  height: "14px",
+                  borderRadius: "2px",
+                  border: `1px solid rgba(255,255,255,0.2)`,
+                  backgroundColor: "rgba(0,0,0,0.3)",
                 }}
-              >
-                visual anchor
-              </div>
+              />
+            ))}
+          </div>
+          <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-evenly py-2 pr-1.5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: "8px",
+                  height: "14px",
+                  borderRadius: "2px",
+                  border: `1px solid rgba(255,255,255,0.2)`,
+                  backgroundColor: "rgba(0,0,0,0.3)",
+                }}
+              />
+            ))}
+          </div>
 
-              <div className="mt-3 max-w-[80%]">
-                <p
-                  className="text-3xl leading-none md:text-4xl"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    textShadow: "0 10px 24px rgba(0,0,0,0.35)",
-                  }}
-                >
-                  {activeTheme.filmTitle}
-                </p>
-                <p
-                  className="mt-2 text-sm uppercase tracking-[0.3em]"
-                  style={{ color: "rgba(255,255,255,0.78)" }}
-                >
-                  {activeTheme.director} · {activeTheme.year}
-                </p>
-              </div>
+          {/* Year + Month badge - top right */}
+          <div className="absolute top-4 right-12 text-right">
+            <div
+              className="text-xs font-medium tracking-[0.2em] uppercase"
+              style={{ color: "rgba(255,255,255,0.6)" }}
+            >
+              {activeYear}
+            </div>
+            <div
+              className="text-2xl md:text-4xl font-bold leading-none"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: activeTheme.colors.accent,
+                textShadow: `0 0 40px ${activeTheme.colors.accent}88`,
+                transition: "color 0.8s ease",
+              }}
+            >
+              {MONTH_NAMES[activeMonthIndex].toUpperCase()}
             </div>
           </div>
-        </div>
 
-        {/* Right-side info panel */}
-        <div className="flex h-full flex-col justify-between gap-4 rounded-[1.6rem] border p-4 md:p-5" style={{ borderColor: "var(--theme-border)", background: "color-mix(in srgb, var(--theme-bg) 14%, transparent)" }}>
-          <div className="space-y-4">
-            <div className="space-y-1">
+          {/* Film info overlay - bottom */}
+          <div className="absolute bottom-0 left-12 right-12 p-4">
+            <motion.div
+              key={activeTheme.id}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.5 }}
+            >
               <p
-                className="text-[10px] font-semibold uppercase tracking-[0.35em]"
-                style={{ color: "var(--theme-text-muted)" }}
+                className="text-xs tracking-[0.35em] uppercase mb-1"
+                style={{ color: "rgba(255,255,255,0.5)" }}
               >
-                {activeYear} · month {activeMonthIndex + 1}
+                {activeTheme.director} · {activeTheme.year}
               </p>
-
               <h2
-                className="text-2xl leading-tight md:text-3xl"
+                className="text-lg md:text-2xl leading-tight font-medium"
                 style={{
                   fontFamily: "var(--font-display)",
-                  color: "var(--theme-text)",
+                  color: "rgba(255,255,255,0.95)",
+                  textShadow: "0 2px 20px rgba(0,0,0,0.8)",
+                  maxWidth: "80%",
                 }}
               >
                 {activeTheme.filmTitle}
               </h2>
-
               <p
-                className="text-sm leading-relaxed"
-                style={{ color: "var(--theme-text-muted)" }}
+                className="text-xs mt-1 italic"
+                style={{ color: "rgba(255,255,255,0.55)" }}
               >
-                {activeTheme.tagline}
+                "{activeTheme.tagline}"
               </p>
-            </div>
+            </motion.div>
+          </div>
+        </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div
-                className="rounded-2xl border p-3"
-                style={{
-                  borderColor: "var(--theme-border)",
-                  background: "color-mix(in srgb, var(--theme-surface) 80%, transparent)",
-                }}
+        {/* Bottom info strip */}
+        <div
+          className="flex items-start justify-between gap-4 px-4 py-3"
+          style={{ backgroundColor: activeTheme.colors.surface, transition: "background-color 0.8s ease" }}
+        >
+          {/* Selected range */}
+          <div className="flex-1 min-w-0">
+            {selectedLabel ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-2"
               >
+                <div
+                  style={{
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    backgroundColor: activeTheme.colors.accent,
+                    flexShrink: 0,
+                    boxShadow: `0 0 8px ${activeTheme.colors.accent}`,
+                  }}
+                />
+                <div>
+                  <p
+                    className="text-[9px] tracking-[0.3em] uppercase"
+                    style={{ color: activeTheme.colors.textMuted }}
+                  >
+                    selected range
+                  </p>
+                  <p
+                    className="text-sm font-medium mt-0.5"
+                    style={{ color: activeTheme.colors.text, fontFamily: "var(--font-display)" }}
+                  >
+                    {selectedLabel}
+                  </p>
+                </div>
+              </motion.div>
+            ) : (
+              <div>
                 <p
-                  className="text-[10px] font-semibold uppercase tracking-[0.3em]"
-                  style={{ color: "var(--theme-text-muted)" }}
+                  className="text-[9px] tracking-[0.3em] uppercase"
+                  style={{ color: activeTheme.colors.textMuted }}
                 >
-                  month tone
+                  click to select range
                 </p>
-                <p className="mt-2 text-sm" style={{ color: "var(--theme-text)" }}>
-                  calm paper, clean structure
+                <p
+                  className="text-xs mt-0.5"
+                  style={{ color: activeTheme.colors.border }}
+                >
+                  start → end date
                 </p>
               </div>
-
-              <div
-                className="rounded-2xl border p-3"
-                style={{
-                  borderColor: "var(--theme-border)",
-                  background: "color-mix(in srgb, var(--theme-surface) 80%, transparent)",
-                }}
-              >
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-[0.3em]"
-                  style={{ color: "var(--theme-text-muted)" }}
-                >
-                  trivia markers
-                </p>
-                <p className="mt-2 text-sm" style={{ color: "var(--theme-text)" }}>
-                  {activeTheme.goldenDates.length} ✦ dates
-                </p>
-              </div>
-            </div>
-
-            <div
-              className="rounded-2xl border px-4 py-3"
-              style={{
-                borderColor: "var(--theme-border)",
-                background: "color-mix(in srgb, var(--theme-surface) 82%, transparent)",
-              }}
-            >
-              <p
-                className="text-[10px] font-semibold uppercase tracking-[0.35em]"
-                style={{ color: "var(--theme-text-muted)" }}
-              >
-                selected range
-              </p>
-              <p className="mt-1 text-sm" style={{ color: "var(--theme-text)" }}>
-                {selectedLabel ?? "pick a start and end date on the grid"}
-              </p>
-            </div>
+            )}
           </div>
 
-          {featuredGolden && (
-            <div
-              className="rounded-[1.4rem] border p-4"
-              style={{
-                borderColor: "var(--theme-border)",
-                background: "color-mix(in srgb, var(--theme-bg) 16%, transparent)",
-              }}
-            >
-              <p
-                className="text-[10px] font-semibold uppercase tracking-[0.35em]"
-                style={{ color: "var(--theme-text-muted)" }}
+          {/* Divider */}
+          <div
+            style={{
+              width: "1px",
+              alignSelf: "stretch",
+              backgroundColor: activeTheme.colors.border,
+              flexShrink: 0,
+            }}
+          />
+
+          {/* Golden dates */}
+          <div className="flex-1 min-w-0">
+            {featuredGolden ? (
+              <div
+                className="cursor-pointer group"
+                onMouseEnter={() => setHoveredGolden(featuredGolden.day)}
+                onMouseLeave={() => setHoveredGolden(null)}
               >
-                featured golden date · {featuredGolden.day}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--theme-text)" }}>
-                {featuredGolden.fact}
-              </p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.28em]" style={{ color: "var(--theme-text-muted)" }}>
-                {featuredGolden.filmReference}
-              </p>
-            </div>
-          )}
+                <p
+                  className="text-[9px] tracking-[0.3em] uppercase flex items-center gap-1"
+                  style={{ color: activeTheme.colors.highlight }}
+                >
+                  <span style={{ fontSize: "8px" }}>✦</span>
+                  featured trivia
+                </p>
+                <p
+                  className="text-xs mt-0.5 leading-relaxed line-clamp-2"
+                  style={{ color: activeTheme.colors.textMuted, transition: "color 0.3s ease" }}
+                >
+                  {hoveredGolden !== null && hoveredGoldenData
+                    ? hoveredGoldenData.fact
+                    : featuredGolden.fact}
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
-      </div>
-    </section>
+      </motion.section>
+    </AnimatePresence>
   );
 }
