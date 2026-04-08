@@ -39,9 +39,10 @@ export function CalendarHeader({ className }: CalendarHeaderProps) {
   }, [activeMonthIndex, syncThemeToMonth]);
 
   const monthLabel = MONTH_NAMES[activeMonthIndex];
+
   const selectionLabel = useMemo(() => {
     const { start, end } = selectedRange;
-    if (!start || !end) return "no scene selected";
+    if (!start || !end) return "select a start and end date";
 
     const fmt = new Intl.DateTimeFormat("en-IN", {
       month: "short",
@@ -55,7 +56,7 @@ export function CalendarHeader({ className }: CalendarHeaderProps) {
     <header
       className={cn(
         "relative overflow-hidden rounded-[2rem] border px-5 py-5 md:px-7 md:py-6",
-        "shadow-[0_18px_60px_rgba(0,0,0,0.22)]",
+        "shadow-[0_18px_60px_rgba(0,0,0,0.18)]",
         className
       )}
       style={{
@@ -64,10 +65,10 @@ export function CalendarHeader({ className }: CalendarHeaderProps) {
       }}
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           background:
-            "radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 34%), radial-gradient(circle at bottom right, rgba(255,255,255,0.05), transparent 38%)",
+            "radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 30%), radial-gradient(circle at bottom right, rgba(255,255,255,0.05), transparent 34%)",
         }}
       />
       <div
@@ -85,7 +86,7 @@ export function CalendarHeader({ className }: CalendarHeaderProps) {
               className="text-[10px] font-semibold uppercase tracking-[0.45em]"
               style={{ color: "var(--theme-text-muted)" }}
             >
-              CineCalendar
+              wall calendar
             </span>
 
             <span
@@ -152,7 +153,7 @@ export function CalendarHeader({ className }: CalendarHeaderProps) {
                 color: "var(--theme-text-muted)",
               }}
             >
-              hover reveals trivia
+              hover for trivia
             </span>
           </div>
 
@@ -165,7 +166,12 @@ export function CalendarHeader({ className }: CalendarHeaderProps) {
               color: "var(--theme-text-muted)",
             }}
           >
-            Scene log: <span style={{ color: "var(--theme-text)" }}>{selectionLabel}</span>
+            <span className="font-semibold uppercase tracking-[0.28em]">
+              selected range
+            </span>
+            <div className="mt-1" style={{ color: "var(--theme-text)" }}>
+              {selectionLabel}
+            </div>
           </div>
         </div>
 

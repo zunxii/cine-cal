@@ -27,48 +27,40 @@ function formatReadableDate(date: Date) {
 }
 
 export function DayCell({ day, theme, onClick, onHover }: DayCellProps) {
-  const isSelectedStart = day.selectionState === "start";
-  const isSelectedEnd = day.selectionState === "end";
+  const isStart = day.selectionState === "start";
+  const isEnd = day.selectionState === "end";
   const isInRange = day.selectionState === "in-range";
 
-  const baseGlow =
-    day.isToday && !isSelectedStart && !isSelectedEnd
-      ? "0 0 0 1px var(--theme-highlight), 0 0 24px color-mix(in srgb, var(--theme-highlight) 45%, transparent)"
-      : undefined;
-
   return (
-    <Tooltip delayDuration={130}>
+    <Tooltip delayDuration={120}>
       <TooltipTrigger asChild>
         <motion.button
           type="button"
-          whileHover={{ y: -2, scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
+          whileHover={day.isCurrentMonth ? { y: -1, scale: 1.01 } : undefined}
+          whileTap={day.isCurrentMonth ? { scale: 0.98 } : undefined}
           onMouseEnter={() => onHover(day.date)}
           onFocus={() => onHover(day.date)}
           onMouseLeave={() => onHover(null)}
           onBlur={() => onHover(null)}
           onClick={() => onClick(day.date)}
+          disabled={!day.isCurrentMonth}
           aria-label={formatReadableDate(day.date)}
-          aria-disabled={!day.isCurrentMonth}
           className={cn(
-            "group relative flex min-h-[4.6rem] flex-col justify-between overflow-hidden border p-2.5 text-left transition-all duration-200",
+            "group relative flex min-h-[4.9rem] flex-col justify-between overflow-hidden border p-2.5 text-left transition-all duration-200",
             "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-            !day.isCurrentMonth && "opacity-45",
-            day.isCurrentMonth && "hover:z-10 hover:shadow-xl"
+            !day.isCurrentMonth && "cursor-default opacity-45",
+            day.isCurrentMonth && "hover:z-10 hover:shadow-lg"
           )}
           style={{
-            background: isSelectedStart || isSelectedEnd
+            background: isStart || isEnd
               ? "var(--theme-accent)"
               : "color-mix(in srgb, var(--theme-surface) 84%, transparent)",
-            borderColor:
-              isSelectedStart || isSelectedEnd
-                ? "color-mix(in srgb, var(--theme-accent) 75%, white)"
-                : "var(--theme-border)",
-            color:
-              isSelectedStart || isSelectedEnd
-                ? "var(--theme-bg)"
-                : "var(--theme-text)",
-            boxShadow: baseGlow,
+            borderColor: isStart || isEnd ? "var(--theme-accent)" : "var(--theme-border)",
+            color: isStart || isEnd ? "var(--theme-bg)" : "var(--theme-text)",
+            boxShadow:
+              day.isToday && !isStart && !isEnd
+                ? "0 0 0 1px var(--theme-highlight), 0 0 18px color-mix(in srgb, var(--theme-highlight) 40%, transparent)"
+                : undefined,
           }}
         >
           {isInRange && (
@@ -77,68 +69,35 @@ export function DayCell({ day, theme, onClick, onHover }: DayCellProps) {
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(135deg, color-mix(in srgb, var(--theme-accentAlt) 24%, transparent), transparent)",
-              }}
-            />
-          )}
-
-          {isSelectedStart && (
-            <span
-              aria-hidden="true"
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(circle at top left, rgba(255,255,255,0.22), transparent 40%)",
+                  "linear-gradient(135deg, color-mix(in srgb, var(--theme-accentAlt) 22%, transparent), transparent)",
               }}
             />
           )}
 
           <div className="relative flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[0.72rem] font-medium uppercase tracking-[0.18em] opacity-80">
-                {day.date.toLocaleDateString("en-IN", { weekday: "short" })}
-              </span>
-              {day.isGoldenDate && (
-                <span
-                  className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-black"
-                  style={{
-                    background: "var(--theme-highlight)",
-                    color: "var(--theme-bg)",
-                  }}
-                >
-                  ✦
-                </span>
-              )}
-            </div>
+            <span
+              className="text-[0.72rem] font-medium uppercase tracking-[0.18em] opacity-80"
+            >
+              {day.date.toLocaleDateString("en-IN", { weekday: "short" })}
+            </span>
 
-            {day.isToday && (
+            {day.isGoldenDate && (
               <span
-                className="rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.28em]"
+                className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-black"
                 style={{
-                  borderColor: "color-mix(in srgb, var(--theme-highlight) 55%, transparent)",
-                  color: isSelectedStart || isSelectedEnd
-                    ? "var(--theme-bg)"
-                    : "var(--theme-highlight)",
-                  background:
-                    isSelectedStart || isSelectedEnd
-                      ? "color-mix(in srgb, rgba(255,255,255,0.22) 18%, transparent)"
-                      : "transparent",
+                  background: "var(--theme-highlight)",
+                  color: "var(--theme-bg)",
                 }}
               >
-                today
+                ✦
               </span>
             )}
           </div>
 
           <div className="relative flex items-end justify-between gap-2">
             <span
-              className={cn(
-                "text-2xl font-semibold leading-none tracking-tight md:text-[1.55rem]",
-                !day.isCurrentMonth && "opacity-70"
-              )}
-              style={{
-                fontFamily: "var(--font-display)",
-              }}
+              className="text-2xl font-semibold leading-none tracking-tight md:text-[1.55rem]"
+              style={{ fontFamily: "var(--font-display)" }}
             >
               {day.dayNumber}
             </span>
@@ -152,36 +111,22 @@ export function DayCell({ day, theme, onClick, onHover }: DayCellProps) {
                   background: "color-mix(in srgb, var(--theme-bg) 15%, transparent)",
                 }}
               >
-                weekend
+                wknd
               </span>
             )}
           </div>
 
-          {day.isGoldenDate ? (
-            <p
-              className="relative line-clamp-2 text-[11px] leading-relaxed"
-              style={{
-                color:
-                  isSelectedStart || isSelectedEnd
-                    ? "color-mix(in srgb, var(--theme-bg) 78%, black)"
-                    : "var(--theme-text-muted)",
-              }}
-            >
-              golden day
-            </p>
-          ) : (
-            <p
-              className="relative text-[11px] leading-relaxed"
-              style={{
-                color:
-                  isSelectedStart || isSelectedEnd
-                    ? "color-mix(in srgb, var(--theme-bg) 76%, black)"
-                    : "var(--theme-text-muted)",
-              }}
-            >
-              hover for the frame
-            </p>
-          )}
+          <p
+            className="relative text-[11px] leading-relaxed"
+            style={{
+              color:
+                isStart || isEnd
+                  ? "color-mix(in srgb, var(--theme-bg) 75%, black)"
+                  : "var(--theme-text-muted)",
+            }}
+          >
+            {day.isGoldenDate ? "golden day" : "calendar day"}
+          </p>
         </motion.button>
       </TooltipTrigger>
 
@@ -222,6 +167,7 @@ export function DayCell({ day, theme, onClick, onHover }: DayCellProps) {
                   </p>
                 </div>
               </div>
+
               <p
                 className="text-[10px] uppercase tracking-[0.3em]"
                 style={{ color: "var(--theme-text-muted)" }}
@@ -239,7 +185,7 @@ export function DayCell({ day, theme, onClick, onHover }: DayCellProps) {
               {formatReadableDate(day.date)}
             </p>
             <p className="text-sm leading-relaxed" style={{ color: "var(--theme-text)" }}>
-              Clean date. No golden fact. Just the frame itself.
+              Date cell in the wall calendar.
             </p>
           </div>
         )}

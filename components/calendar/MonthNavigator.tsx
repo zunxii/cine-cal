@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,28 +13,16 @@ interface MonthNavigatorProps {
 export function MonthNavigator({ className }: MonthNavigatorProps) {
   const goToPrevMonth = useCalendarStore((s) => s.goToPrevMonth);
   const goToNextMonth = useCalendarStore((s) => s.goToNextMonth);
-  const isTransitioning = useCalendarStore((s) => s.isTransitioning);
-  const setTransitioning = useCalendarStore((s) => s.setTransitioning);
-
-  useEffect(() => {
-    if (!isTransitioning) return;
-
-    const t = window.setTimeout(() => {
-      setTransitioning(false);
-    }, 650);
-
-    return () => window.clearTimeout(t);
-  }, [isTransitioning, setTransitioning]);
 
   return (
     <div
       className={cn(
         "inline-flex items-center gap-2 rounded-full border px-2 py-2",
-        "backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+        "shadow-[0_12px_30px_rgba(0,0,0,0.12)] backdrop-blur-md",
         className
       )}
       style={{
-        background: "color-mix(in srgb, var(--theme-surface) 82%, transparent)",
+        background: "color-mix(in srgb, var(--theme-surface) 86%, transparent)",
         borderColor: "var(--theme-border)",
       }}
     >
@@ -52,10 +39,10 @@ export function MonthNavigator({ className }: MonthNavigatorProps) {
       </Button>
 
       <div
-        className="min-w-[6rem] px-2 text-center text-[10px] font-semibold uppercase tracking-[0.35em]"
+        className="min-w-[5.5rem] px-2 text-center text-[10px] font-semibold uppercase tracking-[0.35em]"
         style={{ color: "var(--theme-text-muted)" }}
       >
-        slide
+        month
       </div>
 
       <Button

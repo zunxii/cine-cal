@@ -33,16 +33,14 @@ export function NotesPanel({ className }: NotesPanelProps) {
     if (selectedRange.start && selectedRange.end) {
       return formatRangeLabel(selectedRange.start, selectedRange.end);
     }
-    return "scene log will appear here after a range is selected";
+    return "scene log will appear after a range is selected";
   }, [note?.rangeLabel, selectedRange]);
-
-  const content = note?.content ?? "";
 
   return (
     <section
       className={cn(
         "relative overflow-hidden rounded-[2rem] border p-5 md:p-6",
-        "shadow-[0_18px_60px_rgba(0,0,0,0.16)]",
+        "shadow-[0_18px_60px_rgba(0,0,0,0.14)]",
         className
       )}
       style={{
@@ -51,10 +49,10 @@ export function NotesPanel({ className }: NotesPanelProps) {
       }}
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-70"
+        className="pointer-events-none absolute inset-0 opacity-60"
         style={{
           background:
-            "repeating-linear-gradient(to bottom, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px, transparent 1px, transparent 28px)",
+            "repeating-linear-gradient(to bottom, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 28px)",
         }}
       />
 
@@ -65,7 +63,7 @@ export function NotesPanel({ className }: NotesPanelProps) {
               className="text-[10px] font-semibold uppercase tracking-[0.35em]"
               style={{ color: "var(--theme-text-muted)" }}
             >
-              director&apos;s notebook
+              integrated notes
             </p>
             <h3
               className="text-2xl md:text-3xl"
@@ -74,7 +72,7 @@ export function NotesPanel({ className }: NotesPanelProps) {
                 color: "var(--theme-text)",
               }}
             >
-              Notes
+              Director&apos;s notebook
             </h3>
           </div>
 
@@ -85,7 +83,7 @@ export function NotesPanel({ className }: NotesPanelProps) {
               color: "var(--theme-text-muted)",
             }}
           >
-            autosaved locally
+            local only
           </div>
         </div>
 
@@ -108,11 +106,11 @@ export function NotesPanel({ className }: NotesPanelProps) {
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
           <div className="space-y-2">
             <Textarea
-              value={content}
+              value={note?.content ?? ""}
               onChange={(e) => updateNote(activeMonthIndex, activeYear, e.target.value)}
-              placeholder="Write the memory, the dialogue, the production note, the moment you want this month to keep..."
+              placeholder="Write a memo for this month, the selected range, or anything you want to remember..."
               className={cn(
-                "min-h-[220px] resize-none rounded-[1.6rem] border px-4 py-4 text-base",
+                "min-h-[230px] resize-none rounded-[1.6rem] border px-4 py-4 text-base",
                 "focus-visible:ring-2 focus-visible:ring-offset-2"
               )}
               style={{
@@ -126,8 +124,7 @@ export function NotesPanel({ className }: NotesPanelProps) {
               className="text-[11px] leading-relaxed"
               style={{ color: "var(--theme-text-muted)" }}
             >
-              This section stays pure and functional. The range stamp tells the story;
-              your words fill in the rest.
+              This is a plain functional notes area, as requested in the brief.
             </p>
           </div>
 

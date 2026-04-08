@@ -4,7 +4,10 @@ import { useMemo } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { DayCell } from "./DayCell";
-import { useCalendarStore, selectDateSelectionState } from "@/store/calendarStore";
+import {
+  selectDateSelectionState,
+  useCalendarStore,
+} from "@/store/calendarStore";
 import { useThemeStore } from "@/store/themeStore";
 import type { CalendarDay, CalendarWeek } from "@/types/calendar";
 import type { MonthIndex } from "@/types/theme";
@@ -27,7 +30,7 @@ function isToday(date: Date) {
 
 function buildGridStart(monthIndex: MonthIndex, year: number) {
   const first = new Date(year, monthIndex, 1, 12, 0, 0, 0);
-  const offset = first.getDay(); // Sunday first
+  const offset = first.getDay();
   const start = new Date(year, monthIndex, 1 - offset, 12, 0, 0, 0);
   return start;
 }
@@ -36,7 +39,7 @@ function buildWeeks(
   monthIndex: MonthIndex,
   year: number,
   previewRange: { start: Date | null; end: Date | null },
-  themeGoldenDays: Set<number>,
+  goldenDays: Set<number>,
   goldenLookup: Map<number, { fact: string; filmReference: string }>
 ): CalendarWeek[] {
   const gridStart = buildGridStart(monthIndex, year);
@@ -50,17 +53,18 @@ function buildWeeks(
       const date = new Date(gridStart);
       date.setDate(gridStart.getDate() + cellOffset);
 
-      const currentMonth = date.getMonth() === monthIndex && date.getFullYear() === year;
-      const golden = currentMonth ? goldenLookup.get(date.getDate()) : null;
+      const isCurrentMonth =
+        date.getMonth() === monthIndex && date.getFullYear() === year;
+      const golden = isCurrentMonth ? goldenLookup.get(date.getDate()) : null;
 
       days.push({
         date,
         dayNumber: date.getDate(),
-        isCurrentMonth: currentMonth,
+        isCurrentMonth,
         isToday: isToday(date),
         isWeekend: date.getDay() === 0 || date.getDay() === 6,
         selectionState: selectDateSelectionState(date, previewRange),
-        isGoldenDate: Boolean(currentMonth && themeGoldenDays.has(date.getDate())),
+        isGoldenDate: Boolean(isCurrentMonth && goldenDays.has(date.getDate())),
         goldenFact: golden?.fact,
         goldenFilmRef: golden?.filmReference,
       });
@@ -111,7 +115,7 @@ export function CalendarGrid({ className }: CalendarGridProps) {
     <section
       className={cn(
         "rounded-[2rem] border p-4 md:p-5",
-        "shadow-[0_18px_60px_rgba(0,0,0,0.18)]",
+        "shadow-[0_18px_60px_rgba(0,0,0,0.16)]",
         className
       )}
       style={{
@@ -134,7 +138,7 @@ export function CalendarGrid({ className }: CalendarGridProps) {
               fontFamily: "var(--font-body)",
             }}
           >
-            hover any cell for the frame. ✦ marks the golden dates.
+            select start and end dates across the month.
           </p>
         </div>
 
@@ -158,7 +162,7 @@ export function CalendarGrid({ className }: CalendarGridProps) {
               className="h-2.5 w-2.5 rounded-full"
               style={{ background: "var(--theme-accent)" }}
             />
-            selected range
+            selection
           </span>
         </div>
       </div>
