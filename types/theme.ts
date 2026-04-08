@@ -14,55 +14,41 @@ export type FilmId =
 
 export type MonthIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
-export type FontStyle =
-  | "handpainted"   // GOW, Satya — rough, loud
-  | "ornate"        // Devdas, Bajirao — serif, regal
-  | "collegiate"    // KKHH, 3 Idiots — clean, youthful
-  | "military"      // JTHJ — stencil, stark
-  | "classical"     // Mughal-E-Azam — formal, grand
-  | "rustic"        // Lagaan — earthy, worn
-  | "modern"        // DCH, RDB — contemporary
-  | "romantic";     // DDLJ — warm, flowing
-
-export type GrainIntensity = "none" | "subtle" | "medium" | "heavy";
-
 export interface ThemeColors {
-  bg: string;           // page background
-  surface: string;      // card / calendar surface
-  accent: string;       // primary accent (CTA, selected dates)
-  accentAlt: string;    // secondary accent (range fill, hover)
-  text: string;         // primary text
-  textMuted: string;    // secondary text, day labels
-  border: string;       // grid lines, panel borders
-  highlight: string;    // golden date marker color
-  heroOverlay: string;  // gradient over hero image
-}
-
-export interface ThemeFonts {
-  display: string;  // Google Font name — month title, film name
-  body: string;     // Google Font name — date numbers, nav
-  notes: string;    // Google Font name — notes textarea
-  style: FontStyle;
+  // Paper base - light, warm, cream tones
+  paper: string;          // main calendar paper color
+  paperAlt: string;       // slightly different paper tone
+  ink: string;            // primary text ink color
+  inkLight: string;       // secondary text
+  accent: string;         // movie-specific accent (selection, highlights)
+  accentSoft: string;     // soft version for range fill
+  accentDark: string;     // darker accent for selected dates
+  border: string;         // lines, grid borders
+  borderLight: string;    // lighter grid lines
+  gold: string;           // golden date markers
+  shadow: string;         // paper shadow
+  headerBg: string;       // month header background
+  headerText: string;     // month header text
 }
 
 export interface GoldenDate {
-  day: number;          // 1–31
-  fact: string;         // trivia shown on hover
-  filmReference: string; // e.g. "DDLJ (1995)"
+  day: number;
+  fact: string;
+  filmReference: string;
 }
 
 export interface FilmTheme {
   id: FilmId;
   monthIndex: MonthIndex;
   filmTitle: string;
+  shortTitle: string;
   year: number;
   director: string;
-  tagline: string;         // shown in hero panel
+  tagline: string;
+  quote: string;          // famous movie quote for paper decoration
   colors: ThemeColors;
-  fonts: ThemeFonts;
-  grain: GrainIntensity;
+  heroImage: string;      // Unsplash URL
+  accentPattern: string;  // CSS gradient for decorative elements
+  mood: string;           // e.g. "romantic", "gritty", "epic"
   goldenDates: GoldenDate[];
-  heroGradient: string;    // CSS gradient string for hero bg
-  // Mughal-E-Azam special: starts grayscale
-  startsGrayscale?: boolean;
 }

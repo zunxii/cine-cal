@@ -1,556 +1,513 @@
 import type { FilmTheme } from "@/types/theme";
 
 export const FILM_THEMES: readonly FilmTheme[] = [
-  // ─── JANUARY — DDLJ ───────────────────────────────────────────────
+  // JANUARY — DDLJ (Romantic, golden wheat fields, warm cream)
   {
     id: "ddlj",
     monthIndex: 0,
     filmTitle: "Dilwale Dulhania Le Jayenge",
+    shortTitle: "DDLJ",
     year: 1995,
     director: "Aditya Chopra",
     tagline: "Come, fall in love.",
+    quote: "Bade bade deshon mein aisi choti choti baatein hoti rehti hai...",
+    mood: "romantic",
     colors: {
-      bg:          "#1a1008",
-      surface:     "#2c1f0e",
-      accent:      "#d4a017",
-      accentAlt:   "#8b5e0a",
-      text:        "#f5e6c8",
-      textMuted:   "#a08858",
-      border:      "#3d2d14",
-      highlight:   "#f0c040",
-      heroOverlay: "linear-gradient(to bottom, rgba(26,16,8,0) 40%, rgba(26,16,8,0.95) 100%)",
+      paper: "#fdf8f0",
+      paperAlt: "#faf3e8",
+      ink: "#2d1f0a",
+      inkLight: "#8b6940",
+      accent: "#c8860a",
+      accentSoft: "#f0d49a",
+      accentDark: "#8b5e05",
+      border: "#d4b483",
+      borderLight: "#e8d5a8",
+      gold: "#c8860a",
+      shadow: "rgba(139,105,64,0.15)",
+      headerBg: "#c8860a",
+      headerText: "#fdf8f0",
     },
-    fonts: {
-      display: "Playfair Display",
-      body:    "Lora",
-      notes:   "Kalam",
-      style:   "romantic",
-    },
-    grain: "subtle",
-    heroGradient:
-      "linear-gradient(135deg, #3d2a0a 0%, #7a5218 40%, #c4871a 70%, #1a1008 100%)",
+    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #f0d49a 0%, #c8860a 100%)",
     goldenDates: [
       {
         day: 13,
-        fact:
-          "DDLJ ran for 1,009 consecutive weeks at Maratha Mandir, Mumbai — a world record for a single-screen theatrical run.",
+        fact: "DDLJ ran for 1,009 consecutive weeks at Maratha Mandir — a world theatrical record.",
         filmReference: "DDLJ (1995)",
       },
       {
         day: 20,
-        fact:
-          "Shah Rukh Khan was not the first choice — the role was offered to Saif Ali Khan, who turned it down.",
+        fact: "Shah Rukh Khan was not the first choice — Saif Ali Khan turned down the role.",
         filmReference: "DDLJ (1995)",
       },
     ],
   },
 
-  // ─── FEBRUARY — KKHH ──────────────────────────────────────────────
+  // FEBRUARY — KKHH (College romance, pastel blues, clean whites)
   {
     id: "kkhh",
     monthIndex: 1,
     filmTitle: "Kuch Kuch Hota Hai",
+    shortTitle: "KKHH",
     year: 1998,
     director: "Karan Johar",
     tagline: "You only fall in love once.",
+    quote: "Pyaar dosti hai...",
+    mood: "collegiate",
     colors: {
-      bg:          "#0d1b2e",
-      surface:     "#162440",
-      accent:      "#e84393",
-      accentAlt:   "#a01f60",
-      text:        "#f0f4ff",
-      textMuted:   "#7a90b8",
-      border:      "#1e3054",
-      highlight:   "#ff6eb4",
-      heroOverlay: "linear-gradient(to bottom, rgba(13,27,46,0) 40%, rgba(13,27,46,0.95) 100%)",
+      paper: "#f0f6ff",
+      paperAlt: "#e8f1fa",
+      ink: "#0d2040",
+      inkLight: "#4a6890",
+      accent: "#e84393",
+      accentSoft: "#fce0ee",
+      accentDark: "#a01f60",
+      border: "#b8d0e8",
+      borderLight: "#d8eaf8",
+      gold: "#e84393",
+      shadow: "rgba(72,100,150,0.12)",
+      headerBg: "#e84393",
+      headerText: "#ffffff",
     },
-    fonts: {
-      display: "Bebas Neue",
-      body:    "Nunito",
-      notes:   "Kalam",
-      style:   "collegiate",
-    },
-    grain: "none",
-    heroGradient:
-      "linear-gradient(135deg, #0d1b2e 0%, #1e3a6e 40%, #e84393 80%, #0d1b2e 100%)",
+    heroImage: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #fce0ee 0%, #e84393 100%)",
     goldenDates: [
       {
         day: 16,
-        fact:
-          "Salman Khan's cameo was written overnight after the original actor dropped out just 48 hours before the shoot.",
+        fact: "Salman Khan's cameo was written overnight — the original actor dropped out 48 hours before.",
         filmReference: "KKHH (1998)",
       },
       {
         day: 22,
-        fact:
-          "The St. Teresa's school set was built from scratch in Film City — Karan Johar wanted it to feel like a real institution, not a set.",
+        fact: "The St. Teresa's school set was built entirely from scratch inside Film City.",
         filmReference: "KKHH (1998)",
       },
     ],
   },
 
-  // ─── MARCH — RANG DE BASANTI ──────────────────────────────────────
+  // MARCH — RANG DE BASANTI (Amber, saffron, heat)
   {
     id: "rdb",
     monthIndex: 2,
     filmTitle: "Rang De Basanti",
+    shortTitle: "RDB",
     year: 2006,
     director: "Rakeysh Omprakash Mehra",
     tagline: "A generation awakens.",
+    quote: "Koi bhi desh perfect nahin hota, use perfect banana padta hai.",
+    mood: "revolutionary",
     colors: {
-      bg:          "#1c1200",
-      surface:     "#2e1f00",
-      accent:      "#e8a020",
-      accentAlt:   "#c0521a",
-      text:        "#f5ead0",
-      textMuted:   "#9a7a3a",
-      border:      "#3a2800",
-      highlight:   "#ffcc44",
-      heroOverlay: "linear-gradient(to bottom, rgba(28,18,0,0) 30%, rgba(28,18,0,0.95) 100%)",
+      paper: "#fff8ee",
+      paperAlt: "#fff2e0",
+      ink: "#1a0f00",
+      inkLight: "#6b4500",
+      accent: "#e8720a",
+      accentSoft: "#fde4b8",
+      accentDark: "#a04800",
+      border: "#e0a86a",
+      borderLight: "#f0cc98",
+      gold: "#e8720a",
+      shadow: "rgba(160,72,0,0.12)",
+      headerBg: "#e8720a",
+      headerText: "#fff8ee",
     },
-    fonts: {
-      display: "Oswald",
-      body:    "Source Sans 3",
-      notes:   "Kalam",
-      style:   "modern",
-    },
-    grain: "medium",
-    heroGradient:
-      "linear-gradient(135deg, #1c1200 0%, #5a3800 30%, #e8a020 65%, #c0521a 100%)",
+    heroImage: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #fde4b8 0%, #e8720a 100%)",
     goldenDates: [
       {
         day: 27,
-        fact:
-          "The AR Rahman score was recorded across studios in three countries simultaneously — Chennai, London, and Los Angeles.",
-        filmReference: "Rang De Basanti (2006)",
+        fact: "AR Rahman's score was recorded across Chennai, London, and Los Angeles simultaneously.",
+        filmReference: "RDB (2006)",
       },
       {
         day: 5,
-        fact:
-          "The film was in development for 8 years. Rakeysh Mehra first pitched it in 1997 and faced over 40 rejections.",
-        filmReference: "Rang De Basanti (2006)",
+        fact: "The film was in development for 8 years — Rakeysh Mehra faced 40+ rejections.",
+        filmReference: "RDB (2006)",
       },
     ],
   },
 
-  // ─── APRIL — GANGS OF WASSEYPUR ───────────────────────────────────
+  // APRIL — GANGS OF WASSEYPUR (Charcoal, newspaper, gritty grey-green)
   {
     id: "gow",
     monthIndex: 3,
     filmTitle: "Gangs of Wasseypur",
+    shortTitle: "GOW",
     year: 2012,
     director: "Anurag Kashyap",
-    tagline: "Revenge is a dish best served coal-black.",
+    tagline: "Revenge runs in the blood.",
+    quote: "Babua, Isse pehle ki tu kuch samjhe, tera baap Sardar Khan aa gaya.",
+    mood: "gritty",
     colors: {
-      bg:          "#0a0a0a",
-      surface:     "#141414",
-      accent:      "#c0392b",
-      accentAlt:   "#7a1a10",
-      text:        "#e8e0d0",
-      textMuted:   "#666050",
-      border:      "#222222",
-      highlight:   "#e85020",
-      heroOverlay: "linear-gradient(to bottom, rgba(10,10,10,0) 30%, rgba(10,10,10,0.97) 100%)",
+      paper: "#f5f3ee",
+      paperAlt: "#ede9e0",
+      ink: "#1a1810",
+      inkLight: "#5a5040",
+      accent: "#c0392b",
+      accentSoft: "#f5c6c2",
+      accentDark: "#7a1a10",
+      border: "#c0b090",
+      borderLight: "#d8ceb0",
+      gold: "#c0392b",
+      shadow: "rgba(50,40,20,0.15)",
+      headerBg: "#1a1810",
+      headerText: "#f5f3ee",
     },
-    fonts: {
-      display: "Teko",
-      body:    "Barlow",
-      notes:   "Kalam",
-      style:   "handpainted",
-    },
-    grain: "heavy",
-    heroGradient:
-      "linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 40%, #4a1a10 70%, #c0392b 100%)",
+    heroImage: "https://images.unsplash.com/photo-1517315003714-a071486bd9ea?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #f5c6c2 0%, #c0392b 100%)",
     goldenDates: [
       {
         day: 5,
-        fact:
-          "Ramadhir Singh never fires a gun himself in the entire film — a deliberate directorial choice by Kashyap to show power through command, not action.",
-        filmReference: "Gangs of Wasseypur (2012)",
+        fact: "Ramadhir Singh never fires a gun himself — Kashyap shows power through command, not action.",
+        filmReference: "GOW (2012)",
       },
       {
         day: 18,
-        fact:
-          "The film was shot over 63 days across Dhanbad, Varanasi, and Mumbai. Kashyap used real locals as extras to avoid a 'polished' look.",
-        filmReference: "Gangs of Wasseypur (2012)",
+        fact: "Shot over 63 days across Dhanbad, Varanasi, and Mumbai using real locals as extras.",
+        filmReference: "GOW (2012)",
       },
     ],
   },
 
-  // ─── MAY — SATYA ──────────────────────────────────────────────────
+  // MAY — SATYA (Night blue, neon rain, Mumbai underworld)
   {
     id: "satya",
     monthIndex: 4,
     filmTitle: "Satya",
+    shortTitle: "SATYA",
     year: 1998,
     director: "Ram Gopal Varma",
-    tagline: "The city never sleeps. Neither does the underworld.",
+    tagline: "The city never sleeps.",
+    quote: "Mumbai ka king kaun? Bhiku Mhatre!",
+    mood: "noir",
     colors: {
-      bg:          "#080c10",
-      surface:     "#0f1620",
-      accent:      "#4a90d9",
-      accentAlt:   "#1a4a7a",
-      text:        "#d8e4f0",
-      textMuted:   "#4a6080",
-      border:      "#1a2030",
-      highlight:   "#6ab0f0",
-      heroOverlay: "linear-gradient(to bottom, rgba(8,12,16,0) 30%, rgba(8,12,16,0.97) 100%)",
+      paper: "#f0f4f8",
+      paperAlt: "#e8eef6",
+      ink: "#0a1428",
+      inkLight: "#3a5070",
+      accent: "#2060b0",
+      accentSoft: "#c8ddf5",
+      accentDark: "#0a3070",
+      border: "#a0b8d0",
+      borderLight: "#c8d8e8",
+      gold: "#2060b0",
+      shadow: "rgba(20,40,80,0.12)",
+      headerBg: "#0a1428",
+      headerText: "#f0f4f8",
     },
-    fonts: {
-      display: "Bebas Neue",
-      body:    "Barlow Condensed",
-      notes:   "Kalam",
-      style:   "handpainted",
-    },
-    grain: "heavy",
-    heroGradient:
-      "linear-gradient(135deg, #080c10 0%, #0f2040 50%, #1a4a7a 80%, #4a90d9 100%)",
+    heroImage: "https://images.unsplash.com/photo-1502920514313-52581002a659?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #c8ddf5 0%, #2060b0 100%)",
     goldenDates: [
       {
         day: 3,
-        fact:
-          "Manoj Bajpayee improvised 'Goli maar bheje mein' entirely on set — it was not in the original script and became the film's most quoted line.",
+        fact: "Manoj Bajpayee improvised 'Goli maar bheje mein' entirely on set — not in the script.",
         filmReference: "Satya (1998)",
       },
       {
         day: 21,
-        fact:
-          "RGV shot the entire film on location in Mumbai's actual chawls — no sets were built. Residents often walked into live shots.",
+        fact: "RGV shot the entire film in real Mumbai chawls — residents walked into live shots.",
         filmReference: "Satya (1998)",
       },
     ],
   },
 
-  // ─── JUNE — DEVDAS ────────────────────────────────────────────────
+  // JUNE — DEVDAS (Purple, marigold, opulent)
   {
     id: "devdas",
     monthIndex: 5,
     filmTitle: "Devdas",
+    shortTitle: "DEVDAS",
     year: 2002,
     director: "Sanjay Leela Bhansali",
     tagline: "A love that consumed everything.",
+    quote: "Ek baar jo maine commitment kar li, toh main apne aap ki bhi nahi sunta.",
+    mood: "ornate",
     colors: {
-      bg:          "#1a0a1e",
-      surface:     "#2a1030",
-      accent:      "#9b59b6",
-      accentAlt:   "#c0392b",
-      text:        "#f5e0ff",
-      textMuted:   "#8a6a9a",
-      border:      "#3a1a40",
-      highlight:   "#e040fb",
-      heroOverlay: "linear-gradient(to bottom, rgba(26,10,30,0) 30%, rgba(26,10,30,0.97) 100%)",
+      paper: "#fdf4fb",
+      paperAlt: "#f8ecf7",
+      ink: "#200028",
+      inkLight: "#6a2080",
+      accent: "#8b20a0",
+      accentSoft: "#e8c0f0",
+      accentDark: "#580068",
+      border: "#c080d0",
+      borderLight: "#dca8e8",
+      gold: "#c0392b",
+      shadow: "rgba(80,0,80,0.12)",
+      headerBg: "#8b20a0",
+      headerText: "#fdf4fb",
     },
-    fonts: {
-      display: "Playfair Display",
-      body:    "EB Garamond",
-      notes:   "Kalam",
-      style:   "ornate",
-    },
-    grain: "medium",
-    heroGradient:
-      "linear-gradient(135deg, #1a0a1e 0%, #4a1060 40%, #9b59b6 70%, #c0392b 100%)",
+    heroImage: "https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #e8c0f0 0%, #8b20a0 100%)",
     goldenDates: [
       {
         day: 12,
-        fact:
-          "Bhansali used over 200kg of real rose petals in a single chandelier scene — artificial petals were rejected because they didn't fall with the right weight.",
+        fact: "Bhansali used 200kg of real rose petals in one chandelier scene — artificial ones fell wrong.",
         filmReference: "Devdas (2002)",
       },
       {
         day: 28,
-        fact:
-          "The production design team built an entire 19th-century Calcutta street — 400 feet long — inside a Mumbai studio. It took 11 months to construct.",
+        fact: "The 19th-century Calcutta street set was 400 feet long and took 11 months to construct.",
         filmReference: "Devdas (2002)",
       },
     ],
   },
 
-  // ─── JULY — JAB TAK HAI JAAN ──────────────────────────────────────
+  // JULY — JAB TAK HAI JAAN (Icy blue, snow white, military clean)
   {
     id: "jthj",
     monthIndex: 6,
     filmTitle: "Jab Tak Hai Jaan",
+    shortTitle: "JTHJ",
     year: 2012,
     director: "Yash Chopra",
     tagline: "Till the end of time.",
+    quote: "Mein ek baar jeeta hoon, ek baar marta hoon...",
+    mood: "epic",
     colors: {
-      bg:          "#0c1418",
-      surface:     "#162028",
-      accent:      "#5ba3c9",
-      accentAlt:   "#3a6a8a",
-      text:        "#e8f4f8",
-      textMuted:   "#5a8090",
-      border:      "#1e3040",
-      highlight:   "#80c8e8",
-      heroOverlay: "linear-gradient(to bottom, rgba(12,20,24,0) 30%, rgba(12,20,24,0.97) 100%)",
+      paper: "#f0f7ff",
+      paperAlt: "#e8f2fc",
+      ink: "#0c2040",
+      inkLight: "#3a6080",
+      accent: "#0070a0",
+      accentSoft: "#b8ddf0",
+      accentDark: "#004870",
+      border: "#80b8d0",
+      borderLight: "#b0d0e0",
+      gold: "#0070a0",
+      shadow: "rgba(0,60,90,0.12)",
+      headerBg: "#0070a0",
+      headerText: "#f0f7ff",
     },
-    fonts: {
-      display: "Oswald",
-      body:    "Raleway",
-      notes:   "Kalam",
-      style:   "military",
-    },
-    grain: "subtle",
-    heroGradient:
-      "linear-gradient(135deg, #0c1418 0%, #1a3a50 40%, #5ba3c9 75%, #e8f4f8 100%)",
+    heroImage: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #b8ddf0 0%, #0070a0 100%)",
     goldenDates: [
       {
         day: 13,
-        fact:
-          "The Chhalla sequence was filmed in −15°C in Ladakh. The visible breath mist in every frame is real — no VFX was used.",
-        filmReference: "Jab Tak Hai Jaan (2012)",
+        fact: "The Chhalla sequence was filmed at −15°C in Ladakh. The visible breath mist is real.",
+        filmReference: "JTHJ (2012)",
       },
       {
         day: 25,
-        fact:
-          "This was Yash Chopra's final film as director. He passed away 12 days before its release, never seeing the audience's reaction.",
-        filmReference: "Jab Tak Hai Jaan (2012)",
+        fact: "Yash Chopra passed away 12 days before release — never saw the audience reaction.",
+        filmReference: "JTHJ (2012)",
       },
     ],
   },
 
-  // ─── AUGUST — LAGAAN ──────────────────────────────────────────────
+  // AUGUST — LAGAAN (Ochre fields, cricket whites, dusty earth)
   {
     id: "lagaan",
     monthIndex: 7,
     filmTitle: "Lagaan",
+    shortTitle: "LAGAAN",
     year: 2001,
     director: "Ashutosh Gowariker",
     tagline: "Once upon a time in India.",
+    quote: "Aaj khel ka antim gend, aur humara sapna poora hoga.",
+    mood: "rustic",
     colors: {
-      bg:          "#1a1208",
-      surface:     "#2a1e0c",
-      accent:      "#c87820",
-      accentAlt:   "#8a4e10",
-      text:        "#f0e4c8",
-      textMuted:   "#8a7040",
-      border:      "#3a2a10",
-      highlight:   "#e8a840",
-      heroOverlay: "linear-gradient(to bottom, rgba(26,18,8,0) 30%, rgba(26,18,8,0.97) 100%)",
+      paper: "#fdf8ee",
+      paperAlt: "#f8f0e0",
+      ink: "#1c1000",
+      inkLight: "#6a4800",
+      accent: "#c07a00",
+      accentSoft: "#f0d898",
+      accentDark: "#885400",
+      border: "#d4a848",
+      borderLight: "#e8c880",
+      gold: "#c07a00",
+      shadow: "rgba(130,80,0,0.12)",
+      headerBg: "#c07a00",
+      headerText: "#fdf8ee",
     },
-    fonts: {
-      display: "Teko",
-      body:    "Source Sans 3",
-      notes:   "Kalam",
-      style:   "rustic",
-    },
-    grain: "medium",
-    heroGradient:
-      "linear-gradient(135deg, #1a1208 0%, #4a3010 30%, #c87820 65%, #e8c060 100%)",
+    heroImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #f0d898 0%, #c07a00 100%)",
     goldenDates: [
       {
         day: 15,
-        fact:
-          "Lagaan's climax cricket match took 53 days to film across two separate trips to Bhuj, Gujarat — the longest single-sequence shoot in Bollywood at the time.",
+        fact: "The climax cricket match took 53 days to film in Bhuj — longest single-sequence shoot in Bollywood.",
         filmReference: "Lagaan (2001)",
       },
       {
         day: 7,
-        fact:
-          "Aamir Khan produced the film himself after every major studio passed. The total budget was ₹25 crore — unprecedented for its era.",
+        fact: "Aamir Khan produced it himself after every major studio passed. Budget: ₹25 crore.",
         filmReference: "Lagaan (2001)",
       },
     ],
   },
 
-  // ─── SEPTEMBER — 3 IDIOTS ─────────────────────────────────────────
+  // SEPTEMBER — 3 IDIOTS (Teal Pangong lake, fresh white, green campus)
   {
     id: "three-idiots",
     monthIndex: 8,
     filmTitle: "3 Idiots",
+    shortTitle: "3 IDIOTS",
     year: 2009,
     director: "Rajkumar Hirani",
     tagline: "All is well.",
+    quote: "All izz well... Aal izz well...",
+    mood: "joyful",
     colors: {
-      bg:          "#051828",
-      surface:     "#0a2438",
-      accent:      "#00b4d8",
-      accentAlt:   "#0077a8",
-      text:        "#e0f4ff",
-      textMuted:   "#4a8aaa",
-      border:      "#0f3050",
-      highlight:   "#48cae4",
-      heroOverlay: "linear-gradient(to bottom, rgba(5,24,40,0) 30%, rgba(5,24,40,0.97) 100%)",
+      paper: "#f0fafa",
+      paperAlt: "#e8f5f5",
+      ink: "#051828",
+      inkLight: "#2a6878",
+      accent: "#008090",
+      accentSoft: "#a8dde8",
+      accentDark: "#005868",
+      border: "#70c0d0",
+      borderLight: "#a8dae0",
+      gold: "#008090",
+      shadow: "rgba(0,80,90,0.12)",
+      headerBg: "#008090",
+      headerText: "#f0fafa",
     },
-    fonts: {
-      display: "Nunito",
-      body:    "Nunito",
-      notes:   "Kalam",
-      style:   "collegiate",
-    },
-    grain: "none",
-    heroGradient:
-      "linear-gradient(135deg, #051828 0%, #0a4060 40%, #00b4d8 75%, #e0f4ff 100%)",
+    heroImage: "https://images.unsplash.com/photo-1495653797063-114787b77b23?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #a8dde8 0%, #008090 100%)",
     goldenDates: [
       {
         day: 25,
-        fact:
-          "'All izz well' was added during post-production — the original script had no catchphrase. Hirani felt the film needed a unifying emotional anchor.",
+        fact: "'All izz well' was added in post-production — the original script had no catchphrase.",
         filmReference: "3 Idiots (2009)",
       },
       {
         day: 10,
-        fact:
-          "The Ladakh sequences were filmed at Pangong Lake at 14,000 feet altitude. Several crew members required oxygen tanks on set.",
+        fact: "Pangong Lake scenes filmed at 14,000 feet altitude. Crew required oxygen tanks.",
         filmReference: "3 Idiots (2009)",
       },
     ],
   },
 
-  // ─── OCTOBER — MUGHAL-E-AZAM ──────────────────────────────────────
+  // OCTOBER — MUGHAL-E-AZAM (Marble white, gold, classical black)
   {
     id: "mughal-e-azam",
     monthIndex: 9,
     filmTitle: "Mughal-E-Azam",
+    shortTitle: "MUGHAL-E-AZAM",
     year: 1960,
     director: "K. Asif",
     tagline: "The emperor of all films.",
+    quote: "Mohabbat ko mohabbat ka jawab chahiye, bazaar ka nahi.",
+    mood: "classical",
     colors: {
-      bg:          "#0e0e0e",
-      surface:     "#1a1a1a",
-      accent:      "#c9a84c",
-      accentAlt:   "#7a6020",
-      text:        "#f0ead8",
-      textMuted:   "#706050",
-      border:      "#2a2a2a",
-      highlight:   "#e8c86a",
-      heroOverlay: "linear-gradient(to bottom, rgba(14,14,14,0) 30%, rgba(14,14,14,0.97) 100%)",
+      paper: "#fafaf5",
+      paperAlt: "#f5f5ec",
+      ink: "#1a1a10",
+      inkLight: "#585840",
+      accent: "#c09010",
+      accentSoft: "#f0e0a0",
+      accentDark: "#806000",
+      border: "#c8b870",
+      borderLight: "#e0d298",
+      gold: "#c09010",
+      shadow: "rgba(60,50,0,0.12)",
+      headerBg: "#1a1a10",
+      headerText: "#fafaf5",
     },
-    fonts: {
-      display: "Playfair Display",
-      body:    "EB Garamond",
-      notes:   "Kalam",
-      style:   "classical",
-    },
-    grain: "heavy",
-    heroGradient:
-      "linear-gradient(135deg, #0e0e0e 0%, #2a2a2a 40%, #7a6020 70%, #c9a84c 100%)",
-    startsGrayscale: true,
+    heroImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #f0e0a0 0%, #c09010 100%)",
     goldenDates: [
       {
         day: 5,
-        fact:
-          "K. Asif built actual marble sets — he refused painted backdrops entirely. One set used 500 tonnes of real marble shipped from Rajasthan.",
+        fact: "K. Asif used 500 tonnes of real marble from Rajasthan — refused painted backdrops entirely.",
         filmReference: "Mughal-E-Azam (1960)",
       },
       {
         day: 19,
-        fact:
-          "The film took 9 years to complete and used over 8,000 extras in the war sequence — the largest ever assembled for an Indian film at the time.",
+        fact: "Took 9 years to complete. The war sequence used 8,000 extras — largest ever in Indian cinema.",
         filmReference: "Mughal-E-Azam (1960)",
       },
     ],
   },
 
-  // ─── NOVEMBER — DIL CHAHTA HAI ────────────────────────────────────
+  // NOVEMBER — DIL CHAHTA HAI (Goa blue, fresh citrus, modern light)
   {
     id: "dil-chahta-hai",
     monthIndex: 10,
     filmTitle: "Dil Chahta Hai",
+    shortTitle: "DCH",
     year: 2001,
     director: "Farhan Akhtar",
-    tagline: "Three friends. One summer. No rules.",
+    tagline: "Three friends. One summer.",
+    quote: "Dost, dost na raha... lekin dosti, dosti rahi.",
+    mood: "modern",
     colors: {
-      bg:          "#0a1428",
-      surface:     "#121e38",
-      accent:      "#2ecc71",
-      accentAlt:   "#1a8a4a",
-      text:        "#e8f0ff",
-      textMuted:   "#4a6090",
-      border:      "#1a2840",
-      highlight:   "#50e890",
-      heroOverlay: "linear-gradient(to bottom, rgba(10,20,40,0) 30%, rgba(10,20,40,0.97) 100%)",
+      paper: "#f0f9f0",
+      paperAlt: "#e8f5e8",
+      ink: "#0a2010",
+      inkLight: "#2a6040",
+      accent: "#20a060",
+      accentSoft: "#a8e8c0",
+      accentDark: "#108040",
+      border: "#80c890",
+      borderLight: "#b0dab8",
+      gold: "#20a060",
+      shadow: "rgba(0,80,30,0.12)",
+      headerBg: "#20a060",
+      headerText: "#f0f9f0",
     },
-    fonts: {
-      display: "Bebas Neue",
-      body:    "Raleway",
-      notes:   "Kalam",
-      style:   "modern",
-    },
-    grain: "none",
-    heroGradient:
-      "linear-gradient(135deg, #0a1428 0%, #0a3060 40%, #1a8a4a 70%, #2ecc71 100%)",
+    heroImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #a8e8c0 0%, #20a060 100%)",
     goldenDates: [
       {
         day: 10,
-        fact:
-          "DCH is credited with ending Bollywood's family-drama era and launching modern urban Hindi cinema — Farhan Akhtar was 26 when he wrote and directed it.",
-        filmReference: "Dil Chahta Hai (2001)",
+        fact: "DCH ended Bollywood's family-drama era. Farhan Akhtar was 26 when he wrote and directed it.",
+        filmReference: "DCH (2001)",
       },
       {
         day: 23,
-        fact:
-          "The Goa sequences were entirely improvised on location. Akhtar gave the three leads one rule: act like you actually are on a road trip together.",
-        filmReference: "Dil Chahta Hai (2001)",
+        fact: "The Goa sequences were entirely improvised. Akhtar told the leads to act like a real road trip.",
+        filmReference: "DCH (2001)",
       },
     ],
   },
 
-  // ─── DECEMBER — BAJIRAO MASTANI ───────────────────────────────────
+  // DECEMBER — BAJIRAO MASTANI (Deep crimson, gold, warrior elegance)
   {
     id: "bajirao",
     monthIndex: 11,
     filmTitle: "Bajirao Mastani",
+    shortTitle: "BAJIRAO",
     year: 2015,
     director: "Sanjay Leela Bhansali",
     tagline: "A warrior. A lover. A legend.",
+    quote: "Mastani meri jaan hai, aur jaan se bhi zyada.",
+    mood: "warrior",
     colors: {
-      bg:          "#120800",
-      surface:     "#1e1000",
-      accent:      "#d4a017",
-      accentAlt:   "#8b1a1a",
-      text:        "#f5e8d0",
-      textMuted:   "#8a6840",
-      border:      "#2e1800",
-      highlight:   "#f0c840",
-      heroOverlay: "linear-gradient(to bottom, rgba(18,8,0,0) 30%, rgba(18,8,0,0.97) 100%)",
+      paper: "#fff5f0",
+      paperAlt: "#ffeee8",
+      ink: "#1a0800",
+      inkLight: "#7a2800",
+      accent: "#c02010",
+      accentSoft: "#f5c0b8",
+      accentDark: "#800808",
+      border: "#d09080",
+      borderLight: "#e8b8a8",
+      gold: "#c09010",
+      shadow: "rgba(120,20,0,0.12)",
+      headerBg: "#c02010",
+      headerText: "#fff5f0",
     },
-    fonts: {
-      display: "Playfair Display",
-      body:    "EB Garamond",
-      notes:   "Kalam",
-      style:   "ornate",
-    },
-    grain: "medium",
-    heroGradient:
-      "linear-gradient(135deg, #120800 0%, #3a1800 30%, #8b1a1a 60%, #d4a017 100%)",
+    heroImage: "https://images.unsplash.com/photo-1477840539360-af932bfbc467?w=900&q=75",
+    accentPattern: "linear-gradient(135deg, #f5c0b8 0%, #c02010 100%)",
     goldenDates: [
       {
         day: 18,
-        fact:
-          "Deepika Padukone's ghungroo training began 8 months before the shoot — she practiced 6 hours daily to perform the Mohe Rang Do Laal sequence live.",
+        fact: "Deepika Padukone trained 6 hours daily for 8 months to perform Mohe Rang Do Laal live.",
         filmReference: "Bajirao Mastani (2015)",
       },
       {
         day: 4,
-        fact:
-          "Bhansali spent ₹2 crore on a single set of Mastani's palace — it was demolished immediately after filming and never reused.",
+        fact: "Bhansali spent ₹2 crore on Mastani's palace set — demolished immediately after filming.",
         filmReference: "Bajirao Mastani (2015)",
       },
     ],
   },
 ] as const;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 export function getThemeByMonth(monthIndex: number): FilmTheme {
   const theme = FILM_THEMES.find((t) => t.monthIndex === monthIndex);
-  if (!theme) throw new Error(`No theme found for monthIndex: ${monthIndex}`);
+  if (!theme) return FILM_THEMES[0];
   return theme;
-}
-
-export function getGoldenDaysForMonth(monthIndex: number): Set<number> {
-  const theme = getThemeByMonth(monthIndex);
-  return new Set(theme.goldenDates.map((g) => g.day));
-}
-
-export function getGoldenFact(
-  monthIndex: number,
-  day: number
-): { fact: string; filmReference: string } | null {
-  const theme = getThemeByMonth(monthIndex);
-  const golden = theme.goldenDates.find((g) => g.day === day);
-  return golden
-    ? { fact: golden.fact, filmReference: golden.filmReference }
-    : null;
 }
