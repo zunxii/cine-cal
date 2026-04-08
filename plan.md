@@ -27,3 +27,4 @@ Phase 6 — Polish
   ├── Per-month font switching
   ├── Mughal-E-Azam grayscale → color on hover
   └── Transition refinement
+
