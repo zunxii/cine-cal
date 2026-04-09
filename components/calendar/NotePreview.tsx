@@ -50,7 +50,7 @@ export function NotePreview({ content, theme, onEdit }: NotePreviewProps) {
               <div className="flex items-start justify-between mb-1.5 gap-2">
                 <p
                   style={{
-                    fontFamily: "'Josefin Sans', sans-serif",
+                    fontFamily: "var(--font-josefin, sans-serif)",
                     fontSize: "7px",
                     textTransform: "uppercase",
                     letterSpacing: "0.2em",
@@ -70,7 +70,7 @@ export function NotePreview({ content, theme, onEdit }: NotePreviewProps) {
                   fontSize: "10px",
                   lineHeight: 1.6,
                   color: theme.colors.ink,
-                  fontFamily: "'Kalam', cursive",
+                  fontFamily: "var(--font-kalam, cursive)",
                 }}
               >
                 {preview}

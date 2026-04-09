@@ -38,7 +38,7 @@ export function NoteDialog({
   }, [isOpen]);
 
   const labelStyle = {
-    fontFamily: "'Josefin Sans', sans-serif",
+    fontFamily: "var(--font-josefin, sans-serif)",
     fontSize: "8px",
     textTransform: "uppercase" as const,
     letterSpacing: "0.22em",
@@ -97,7 +97,7 @@ export function NoteDialog({
                     <h3
                       className="mt-0.5 leading-tight"
                       style={{
-                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontFamily: "var(--font-playfair, Georgia, serif)",
                         fontSize: "20px",
                         fontWeight: 600,
                         color: theme.colors.ink,
@@ -131,7 +131,7 @@ export function NoteDialog({
                   className="italic leading-relaxed"
                   style={{
                     color: theme.colors.inkLight,
-                    fontFamily: "'Lora', Georgia, serif",
+                    fontFamily: "var(--font-lora, Georgia, serif)",
                     fontSize: "10px",
                     opacity: 0.9,
                   }}
@@ -182,7 +182,7 @@ export function NoteDialog({
                     className="absolute top-4 left-12 pointer-events-none italic select-none"
                     style={{
                       color: `${theme.colors.inkLight}40`,
-                      fontFamily: "'Kalam', cursive",
+                      fontFamily: "var(--font-kalam, cursive)",
                       fontSize: "13px",
                     }}
                   >
@@ -197,7 +197,7 @@ export function NoteDialog({
                   className="absolute inset-0 w-full h-full resize-none bg-transparent border-none outline-none pl-12 pr-4 py-4"
                   style={{
                     color: theme.colors.ink,
-                    fontFamily: "'Kalam', cursive",
+                    fontFamily: "var(--font-kalam, cursive)",
                     fontSize: "13px",
                     caretColor: theme.colors.accent,
                     lineHeight: "32px",
@@ -228,7 +228,7 @@ export function NoteDialog({
                       style={{
                         color: theme.colors.inkLight,
                         background: theme.colors.paperAlt,
-                        fontFamily: "'Josefin Sans', sans-serif",
+                        fontFamily: "var(--font-josefin, sans-serif)",
                         fontSize: "9px",
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
@@ -243,7 +243,7 @@ export function NoteDialog({
                     style={{
                       background: theme.colors.headerBg,
                       color: theme.colors.headerText,
-                      fontFamily: "'Josefin Sans', sans-serif",
+                      fontFamily: "var(--font-josefin, sans-serif)",
                       fontSize: "10px",
                       fontWeight: 700,
                       letterSpacing: "0.15em",

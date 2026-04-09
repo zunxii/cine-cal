@@ -92,7 +92,7 @@ export function CalendarGrid({
                 className="text-[10px] uppercase tracking-widest font-semibold"
                 style={{
                   color: theme.colors.accent,
-                  fontFamily: "'Josefin Sans', sans-serif",
+                  fontFamily: "var(--font-josefin, sans-serif)",
                   letterSpacing: "0.18em",
                 }}
               >
@@ -124,7 +124,7 @@ export function CalendarGrid({
               letterSpacing: "0.18em",
               textTransform: "uppercase",
               color: i === 0 || i === 6 ? theme.colors.accent : theme.colors.inkLight,
-              fontFamily: "'Josefin Sans', sans-serif",
+              fontFamily: "var(--font-josefin, sans-serif)",
             }}
           >
             {label}
@@ -200,7 +200,7 @@ export function CalendarGrid({
                 textTransform: "uppercase",
                 letterSpacing: "0.15em",
                 color: theme.colors.inkLight,
-                fontFamily: "'Josefin Sans', sans-serif",
+                fontFamily: "var(--font-josefin, sans-serif)",
               }}
             >
               {item.label}
@@ -212,7 +212,7 @@ export function CalendarGrid({
           style={{
             fontSize: "8px",
             color: `${theme.colors.inkLight}60`,
-            fontFamily: "'Josefin Sans', sans-serif",
+            fontFamily: "var(--font-josefin, sans-serif)",
             letterSpacing: "0.06em",
           }}
         >

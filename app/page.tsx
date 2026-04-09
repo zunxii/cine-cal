@@ -25,7 +25,6 @@ import type { MonthIndex } from "@/types/theme";
 
 // ─── Cinematic page‑flip variants ─────────────────────────────────────────────
 const pageVariants = {
-  // Forward navigation (next month)
   enterRight: {
     opacity: 0,
     x: 80,
@@ -40,7 +39,6 @@ const pageVariants = {
     scale: 0.96,
     transformOrigin: "right center",
   },
-  // Backward navigation (prev month)
   enterLeft: {
     opacity: 0,
     x: -80,
@@ -93,40 +91,67 @@ export default function CalendarPage() {
   const selectedRange = store.selectedRange;
   const previewRange = store.getPreviewRange();
 
+  // Use a ref to track the previous month for direction detection
+  // This avoids calling setState synchronously in an effect
+  const prevMonthRef = useRef(activeMonthIndex);
+  const prevYearRef = useRef(activeYear);
+
   const [theme, setTheme] = useState<FilmTheme>(() =>
     getThemeByMonth(activeMonthIndex)
   );
   const [direction, setDirection] = useState<"left" | "right">("right");
-  const [prevMonthIndex, setPrevMonthIndex] = useState(activeMonthIndex);
+  const [flipKey, setFlipKey] = useState(0);
+
   const [contextMenu, setContextMenu] = useState<{
     pos: { x: number; y: number };
     dayNumber: number;
     date: Date;
   } | null>(null);
 
-  // Track key for AnimatePresence (direction-aware)
-  const [flipKey, setFlipKey] = useState(0);
-
-  // Update theme when month changes
+  // Inject theme on initial mount only
   useEffect(() => {
-    const newTheme = getThemeByMonth(activeMonthIndex);
-    const isForward =
-      (activeMonthIndex > prevMonthIndex) ||
-      (prevMonthIndex === 11 && activeMonthIndex === 0);
-    setDirection(isForward ? "right" : "left");
-    setTheme(newTheme);
-    setPrevMonthIndex(activeMonthIndex);
-    injectTheme(newTheme);
-    setFlipKey((k) => k + 1);
-  }, [activeMonthIndex, activeYear]);
-
-  // Inject theme on mount
-  useEffect(() => {
-    injectTheme(theme);
+    injectTheme(getThemeByMonth(activeMonthIndex));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Update theme + direction when month/year changes
+  // ALL state updates are deferred to avoid cascading renders
+  useEffect(() => {
+    const prevMonth = prevMonthRef.current;
+    const prevYear = prevYearRef.current;
+
+    // Only act on actual change
+    if (prevMonth === activeMonthIndex && prevYear === activeYear) return;
+
+    const newTheme = getThemeByMonth(activeMonthIndex);
+    injectTheme(newTheme);
+
+    const isForward =
+      activeYear > prevYear ||
+      (activeYear === prevYear && activeMonthIndex > prevMonth) ||
+      (prevMonth === 11 && activeMonthIndex === 0 && activeYear >= prevYear);
+
+    // Update refs
+    prevMonthRef.current = activeMonthIndex;
+    prevYearRef.current = activeYear;
+
+    // Schedule all state updates together in a timeout to prevent cascading
+    const t = setTimeout(() => {
+      setDirection(isForward ? "right" : "left");
+      setTheme(newTheme);
+      setFlipKey((k) => k + 1);
+    }, 0);
+
+    return () => clearTimeout(t);
+  }, [activeMonthIndex, activeYear]);
+
   const note = getNote(activeMonthIndex as MonthIndex, activeYear);
-  const markedDates = note?.markedDates ?? [];
+
+  // Wrap markedDates in useMemo so it doesn't recreate on every render
+  const markedDates = useMemo(
+    () => note?.markedDates ?? [],
+    [note?.markedDates]
+  );
 
   const weeks = useMemo(() => {
     const baseWeeks = buildCalendarDays(activeMonthIndex, activeYear);
@@ -159,18 +184,15 @@ export default function CalendarPage() {
     [toggleMarkDate, activeMonthIndex, activeYear]
   );
 
-  // ─── Navigation with direction tracking ────────────────────────────
   const handleNext = useCallback(() => {
-    setDirection("right");
     goToNextMonth();
   }, [goToNextMonth]);
 
   const handlePrev = useCallback(() => {
-    setDirection("left");
     goToPrevMonth();
   }, [goToPrevMonth]);
 
-  // ─── Keyboard navigation ───────────────────────────────────────────
+  // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") handleNext();
@@ -180,7 +202,6 @@ export default function CalendarPage() {
     return () => window.removeEventListener("keydown", onKey);
   }, [handleNext, handlePrev]);
 
-  // Dynamic page background based on theme
   const pageStyle = {
     background: `
       radial-gradient(ellipse at 20% 10%, ${theme.colors.accentSoft}40 0%, transparent 50%),
@@ -208,7 +229,6 @@ export default function CalendarPage() {
         className="calendar-stack-wrapper relative w-full max-w-4xl"
         style={{ perspective: "1400px", marginBottom: "20px" }}
       >
-        {/* Stack layer CSS vars from theme */}
         <style>{`
           .calendar-stack-wrapper::before,
           .calendar-stack-wrapper::after {
@@ -316,7 +336,7 @@ export default function CalendarPage() {
                   style={{
                     border: `1.5px solid ${theme.colors.border}`,
                     color: theme.colors.inkLight,
-                    fontFamily: "'Josefin Sans', sans-serif",
+                    fontFamily: "var(--font-josefin, sans-serif)",
                     letterSpacing: "0.08em",
                   }}
                 >
@@ -329,7 +349,7 @@ export default function CalendarPage() {
                   style={{
                     background: theme.colors.headerBg,
                     color: theme.colors.headerText,
-                    fontFamily: "'Josefin Sans', sans-serif",
+                    fontFamily: "var(--font-josefin, sans-serif)",
                     letterSpacing: "0.15em",
                   }}
                 >
@@ -344,7 +364,7 @@ export default function CalendarPage() {
                   style={{
                     border: `1.5px solid ${theme.colors.border}`,
                     color: theme.colors.inkLight,
-                    fontFamily: "'Josefin Sans', sans-serif",
+                    fontFamily: "var(--font-josefin, sans-serif)",
                     letterSpacing: "0.08em",
                   }}
                 >

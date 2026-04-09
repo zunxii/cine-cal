@@ -42,35 +42,35 @@ export function buildCalendarDays(monthIndex: number, year: number) {
   return weeks;
 }
 
-// Film-specific display font mapping
+// Film-specific display font mapping — using CSS variable references from next/font
 const DISPLAY_FONT_MAP: Record<string, string> = {
-  ddlj:            "'Playfair Display', Georgia, serif",
-  kkhh:            "'Bebas Neue', Impact, sans-serif",
-  rdb:             "'Oswald', 'Arial Narrow', sans-serif",
-  gow:             "'Teko', Impact, sans-serif",
-  satya:           "'Bebas Neue', Impact, sans-serif",
-  devdas:          "'Cormorant Garamond', 'EB Garamond', Georgia, serif",
-  jthj:            "'Cinzel', Georgia, serif",
-  lagaan:          "'Oswald', 'Arial Narrow', sans-serif",
-  "three-idiots":  "'Righteous', 'Nunito', sans-serif",
-  "mughal-e-azam": "'Cinzel', 'Playfair Display', Georgia, serif",
-  "dil-chahta-hai":"'Josefin Sans', 'Raleway', sans-serif",
-  bajirao:         "'Cormorant Garamond', Georgia, serif",
+  ddlj:            "var(--font-playfair, Georgia, serif)",
+  kkhh:            "var(--font-bebas, Impact, sans-serif)",
+  rdb:             "var(--font-oswald, 'Arial Narrow', sans-serif)",
+  gow:             "var(--font-teko, Impact, sans-serif)",
+  satya:           "var(--font-bebas, Impact, sans-serif)",
+  devdas:          "var(--font-eb-garamond, Georgia, serif)",
+  jthj:            "var(--font-cinzel, Georgia, serif)",
+  lagaan:          "var(--font-oswald, 'Arial Narrow', sans-serif)",
+  "three-idiots":  "var(--font-righteous, sans-serif)",
+  "mughal-e-azam": "var(--font-cinzel, Georgia, serif)",
+  "dil-chahta-hai":"var(--font-josefin, sans-serif)",
+  bajirao:         "var(--font-eb-garamond, Georgia, serif)",
 };
 
 const BODY_FONT_MAP: Record<string, string> = {
-  ddlj:            "'Lora', Georgia, serif",
-  kkhh:            "'Nunito', sans-serif",
-  rdb:             "'Barlow', sans-serif",
-  gow:             "'Barlow', sans-serif",
-  satya:           "'Barlow Condensed', sans-serif",
-  devdas:          "'EB Garamond', Georgia, serif",
-  jthj:            "'Raleway', sans-serif",
-  lagaan:          "'Source Sans 3', sans-serif",
-  "three-idiots":  "'Nunito', sans-serif",
-  "mughal-e-azam": "'Libre Baskerville', Georgia, serif",
-  "dil-chahta-hai":"'Josefin Sans', sans-serif",
-  bajirao:         "'EB Garamond', Georgia, serif",
+  ddlj:            "var(--font-lora, Georgia, serif)",
+  kkhh:            "var(--font-nunito, sans-serif)",
+  rdb:             "var(--font-barlow, sans-serif)",
+  gow:             "var(--font-barlow, sans-serif)",
+  satya:           "var(--font-barlow-condensed, sans-serif)",
+  devdas:          "var(--font-eb-garamond, Georgia, serif)",
+  jthj:            "var(--font-raleway, sans-serif)",
+  lagaan:          "var(--font-source-sans, sans-serif)",
+  "three-idiots":  "var(--font-nunito, sans-serif)",
+  "mughal-e-azam": "var(--font-libre-baskerville, Georgia, serif)",
+  "dil-chahta-hai":"var(--font-josefin, sans-serif)",
+  bajirao:         "var(--font-eb-garamond, Georgia, serif)",
 };
 
 export function injectTheme(theme: FilmTheme) {
@@ -93,12 +93,12 @@ export function injectTheme(theme: FilmTheme) {
   r.style.setProperty("--header-bg",    c.headerBg);
   r.style.setProperty("--header-text",  c.headerText);
 
-  // Font variables
-  const displayFont = DISPLAY_FONT_MAP[theme.id] ?? "'Playfair Display', Georgia, serif";
-  const bodyFont    = BODY_FONT_MAP[theme.id]    ?? "'Lora', Georgia, serif";
+  // Font variables — reference the CSS vars injected by next/font
+  const displayFont = DISPLAY_FONT_MAP[theme.id] ?? "var(--font-playfair, Georgia, serif)";
+  const bodyFont    = BODY_FONT_MAP[theme.id]    ?? "var(--font-lora, Georgia, serif)";
   r.style.setProperty("--font-display", displayFont);
   r.style.setProperty("--font-body",    bodyFont);
-  r.style.setProperty("--font-notes",   "'Kalam', cursive");
+  r.style.setProperty("--font-notes",   "var(--font-kalam, cursive)");
 
   // Update body background
   document.body.style.setProperty("background-color", c.paperAlt);

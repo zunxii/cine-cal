@@ -47,7 +47,7 @@ export function DateContextMenu({
   });
 
   const menuItemStyle = {
-    fontFamily: "'Josefin Sans', sans-serif",
+    fontFamily: "var(--font-josefin, sans-serif)",
     fontSize: "11px",
     letterSpacing: "0.04em",
     color: theme.colors.ink,
@@ -78,7 +78,7 @@ export function DateContextMenu({
         >
           <p
             style={{
-              fontFamily: "'Josefin Sans', sans-serif",
+              fontFamily: "var(--font-josefin, sans-serif)",
               fontSize: "8px",
               letterSpacing: "0.15em",
               textTransform: "uppercase",

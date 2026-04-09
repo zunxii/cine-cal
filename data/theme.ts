@@ -105,7 +105,7 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg:   "#b04000",
       headerText: "#fff9ee",
     },
-    heroImage: "/images/rdb.jpg",
+    heroImage: "/images/rang-de-basanti.jpg",
     accentPattern: "linear-gradient(135deg, #ffd89a 0%, #e86000 60%, #b04000 100%)",
     goldenDates: [
       { day: 27, fact: "AR Rahman's score was recorded across Chennai, London, and Los Angeles simultaneously.", filmReference: "RDB (2006)" },
@@ -339,7 +339,7 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg:   "#005830",
       headerText: "#f0faf4",
     },
-    heroImage: "/images/three-idiots.jpg",
+    heroImage: "/images/3idiots.jpg",
     accentPattern: "linear-gradient(135deg, #a8e8c4 0%, #008848 60%, #005830 100%)",
     goldenDates: [
       { day: 25, fact: "'All izz well' was added in post-production — the original script had no catchphrase.", filmReference: "3 Idiots (2009)" },
@@ -417,7 +417,7 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg:   "#0c7848",
       headerText: "#f0f8f2",
     },
-    heroImage: "/images/dil-chahta-hai.jpg",
+    heroImage: "/images/dch.jpg",
     accentPattern: "linear-gradient(135deg, #a4e0c4 0%, #18a868 60%, #0c7848 100%)",
     goldenDates: [
       { day: 10, fact: "DCH ended Bollywood's family-drama era. Farhan Akhtar was 26 when he wrote and directed it.", filmReference: "DCH (2001)" },

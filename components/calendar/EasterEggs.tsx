@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import type { FilmTheme } from "@/types/theme";
 
@@ -18,17 +18,20 @@ const POSITION_CLASSES: Record<string, string> = {
 
 export function EasterEggs({ theme }: EasterEggsProps) {
   const [mounted, setMounted] = useState(false);
+  const prevThemeId = useRef<string | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 600);
-    return () => clearTimeout(t);
-  }, [theme.id]);
+    // On initial mount or theme change, schedule mount with delay
+    // Avoid calling setState synchronously — always schedule via setTimeout
+    const delay = prevThemeId.current === null ? 600 : 700;
+    prevThemeId.current = theme.id;
 
-  // Reset on theme change
-  useEffect(() => {
-    setMounted(false);
-    const t = setTimeout(() => setMounted(true), 700);
-    return () => clearTimeout(t);
+    const t = setTimeout(() => setMounted(true), delay);
+    return () => {
+      clearTimeout(t);
+      // Signal unmount for next render cycle — don't call setMounted(false) directly
+      setMounted(false);
+    };
   }, [theme.id]);
 
   if (!mounted) return null;
@@ -51,7 +54,7 @@ export function EasterEggs({ theme }: EasterEggsProps) {
               <p
                 style={{
                   color: theme.colors.inkLight,
-                  fontFamily: "'Kalam', cursive",
+                  fontFamily: "var(--font-kalam, cursive)",
                   fontSize: "9px",
                   maxWidth: "170px",
                   opacity: 0.5,
@@ -121,7 +124,7 @@ export function EasterEggs({ theme }: EasterEggsProps) {
                   borderColor: theme.colors.accent,
                   color: theme.colors.accent,
                   fontSize: "8px",
-                  fontFamily: "'Josefin Sans', sans-serif",
+                  fontFamily: "var(--font-josefin, sans-serif)",
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
                   opacity: 0.4,
@@ -146,10 +149,10 @@ export function EasterEggs({ theme }: EasterEggsProps) {
           style={{
             color: theme.colors.accent,
             fontFamily: theme.id === "mughal-e-azam" || theme.id === "bajirao" || theme.id === "devdas"
-              ? "'Cormorant Garamond', Georgia, serif"
+              ? "var(--font-eb-garamond, Georgia, serif)"
               : theme.id === "kkhh" || theme.id === "satya"
-              ? "'Bebas Neue', sans-serif"
-              : "'Playfair Display', Georgia, serif",
+              ? "var(--font-bebas, sans-serif)"
+              : "var(--font-playfair, Georgia, serif)",
             fontSize: "clamp(22px, 3vw, 36px)",
             fontWeight: 700,
             fontStyle: "italic",

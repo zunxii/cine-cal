@@ -32,7 +32,7 @@ function DayTooltip({ fact, filmRef, theme }: DayTooltipProps) {
           className="text-[8px] font-bold uppercase tracking-widest mb-1.5"
           style={{
             color: theme.colors.gold,
-            fontFamily: "'Josefin Sans', sans-serif",
+            fontFamily: "var(--font-josefin, sans-serif)",
             letterSpacing: "0.18em",
           }}
         >
@@ -42,7 +42,7 @@ function DayTooltip({ fact, filmRef, theme }: DayTooltipProps) {
           className="text-[11px] leading-relaxed"
           style={{
             color: theme.colors.ink,
-            fontFamily: "'Lora', Georgia, serif",
+            fontFamily: "var(--font-lora, Georgia, serif)",
           }}
         >
           {fact}
@@ -122,7 +122,7 @@ export function DayCell({
           style={{
             color: theme.colors.borderLight,
             opacity: 0.35,
-            fontFamily: "'Lora', Georgia, serif",
+            fontFamily: "var(--font-lora, Georgia, serif)",
           }}
         >
           {dayNumber}
@@ -198,7 +198,7 @@ export function DayCell({
         <span
           className="leading-none select-none"
           style={{
-            fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif",
+            fontFamily: "var(--font-eb-garamond, var(--font-playfair, Georgia, serif))",
             fontSize: "clamp(11px, 2.2vw, 16px)",
             fontWeight: isToday ? 700 : 400,
             color: isSelected
