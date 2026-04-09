@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 Cine Calendar
 
-## Getting Started
+A cinematic, interactive calendar web app with smooth page transitions, film-inspired themes, and note-taking features.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## ✨ Features
+
+- 📅 Dynamic monthly calendar with smooth navigation  
+- 🎞️ Cinematic page-flip animations (Framer Motion)  
+- 🎨 Theme changes based on month (film-inspired aesthetics)  
+- 📝 Notes system for each month  
+- ⭐ Mark important dates  
+- 🖱️ Right-click context menu for quick actions  
+- 📱 Fully responsive (mobile + desktop)  
+- ⌨️ Keyboard navigation (arrow keys)
+
+---
+
+## 🚀 Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript  
+- **Styling:** Tailwind CSS  
+- **Animations:** Framer Motion  
+- **State Management:** Zustand  
+- **Icons:** Lucide React  
+
+---
+
+## 🧠 Architecture
+
+The project is structured in a modular way for scalability:
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+app/
+page.tsx        → Main calendar page
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+components/
+calendar/
+CalendarGrid
+HeroSection
+SidebarPanel
+SpiralBinding
+NoteDialog
+DateContextMenu
+EasterEggs
+NotePreview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+lib/
+calendarUtils   → Calendar logic
 
-## Learn More
+store/
+calendarStore   → Zustand state
 
-To learn more about Next.js, take a look at the following resources:
+data/
+theme.ts        → Monthly themes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+````
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ⚙️ Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Clone the repo
+git clone https://github.com/your-username/cine-calendar.git
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Navigate into project
+cd cine-calendar
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+````
+
+---
+
+## 🏗️ Build
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## 🎮 Usage
+
+* Use **arrow keys** or buttons to navigate months
+* Click dates to select ranges
+* Right-click a date for actions
+* Add notes for each month
+* Mark important dates
+
+---
+
+## 🎨 Highlights
+
+* Custom **page transition system** using directional animations
+* Theme injection system for dynamic styling
+* Optimized rendering using `useMemo`, `useCallback`
+* Clean separation of UI + logic
+
+---
+
+## 📸 Preview
+
+> Live Demo - https://youtu.be/wt243nSVDBs
+
+---
+
+## 🛠️ Future Improvements
+
+* 🔗 Export calendar as PDF
+* ☁️ Cloud sync for notes
+* 👥 User authentication
+* 🎬 More cinematic themes
+
+---
+
+## 👤 Author
+
+**Junaid**
+---
+
+## ⭐ Show your support
+
+If you like this project, give it a ⭐ on GitHub!
+
+```
+```
