@@ -15,10 +15,6 @@ export interface CalendarDay {
   isMarked?: boolean;
 }
 
-export interface CalendarWeek {
-  days: CalendarDay[];
-}
-
 export interface DateRange {
   start: Date | null;
   end: Date | null;
@@ -31,5 +27,5 @@ export interface MonthNote {
   year: number;
   content: string;
   rangeLabel: string | null;
-  markedDates: number[]; // day numbers marked
+  markedDates: number[];
 }

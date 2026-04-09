@@ -3,15 +3,18 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CineCalendar — Bollywood Wall Calendar",
-  description: "A premium paper wall calendar inspired by 12 iconic Bollywood films. Date range selection, golden trivia dates, notes, and immersive film themes.",
+  description:
+    "A premium paper wall calendar inspired by 12 iconic Bollywood films. Date range selection, golden trivia dates, notes, and immersive film themes.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased min-h-screen">
-        {children}
-      </body>
+      <body className="antialiased min-h-screen">{children}</body>
     </html>
   );
 }

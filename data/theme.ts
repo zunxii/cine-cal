@@ -1,7 +1,6 @@
 import type { FilmTheme } from "@/types/theme";
 
 export const FILM_THEMES: readonly FilmTheme[] = [
-  // JANUARY — DDLJ (Romantic, golden wheat fields, warm cream)
   {
     id: "ddlj",
     monthIndex: 0,
@@ -27,23 +26,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#c8860a",
       headerText: "#fdf8f0",
     },
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=75",
+    heroImage: "/images/ddlj.jpg",
     accentPattern: "linear-gradient(135deg, #f0d49a 0%, #c8860a 100%)",
     goldenDates: [
-      {
-        day: 13,
-        fact: "DDLJ ran for 1,009 consecutive weeks at Maratha Mandir — a world theatrical record.",
-        filmReference: "DDLJ (1995)",
-      },
-      {
-        day: 20,
-        fact: "Shah Rukh Khan was not the first choice — Saif Ali Khan turned down the role.",
-        filmReference: "DDLJ (1995)",
-      },
+      { day: 13, fact: "DDLJ ran for 1,009 consecutive weeks at Maratha Mandir — a world theatrical record.", filmReference: "DDLJ (1995)" },
+      { day: 20, fact: "Shah Rukh Khan was not the first choice — Saif Ali Khan turned down the role.", filmReference: "DDLJ (1995)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Senorita... palat!", position: "bottom-left" },
+      { type: "symbol", content: "🌾", position: "bottom-right" },
     ],
   },
-
-  // FEBRUARY — KKHH (College romance, pastel blues, clean whites)
   {
     id: "kkhh",
     monthIndex: 1,
@@ -69,23 +62,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#e84393",
       headerText: "#ffffff",
     },
-    heroImage: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=900&q=75",
+    heroImage: "/images/kkhh.jpg",
     accentPattern: "linear-gradient(135deg, #fce0ee 0%, #e84393 100%)",
     goldenDates: [
-      {
-        day: 16,
-        fact: "Salman Khan's cameo was written overnight — the original actor dropped out 48 hours before.",
-        filmReference: "KKHH (1998)",
-      },
-      {
-        day: 22,
-        fact: "The St. Teresa's school set was built entirely from scratch inside Film City.",
-        filmReference: "KKHH (1998)",
-      },
+      { day: 16, fact: "Salman Khan's cameo was written overnight — the original actor dropped out 48 hours before.", filmReference: "KKHH (1998)" },
+      { day: 22, fact: "The St. Teresa's school set was built entirely from scratch inside Film City.", filmReference: "KKHH (1998)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Kuch kuch hota hai Rahul, tum nahi samjhoge", position: "bottom-left" },
+      { type: "symbol", content: "💌", position: "bottom-right" },
     ],
   },
-
-  // MARCH — RANG DE BASANTI (Amber, saffron, heat)
   {
     id: "rdb",
     monthIndex: 2,
@@ -111,23 +98,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#e8720a",
       headerText: "#fff8ee",
     },
-    heroImage: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=900&q=75",
+    heroImage: "/images/rdb.jpg",
     accentPattern: "linear-gradient(135deg, #fde4b8 0%, #e8720a 100%)",
     goldenDates: [
-      {
-        day: 27,
-        fact: "AR Rahman's score was recorded across Chennai, London, and Los Angeles simultaneously.",
-        filmReference: "RDB (2006)",
-      },
-      {
-        day: 5,
-        fact: "The film was in development for 8 years — Rakeysh Mehra faced 40+ rejections.",
-        filmReference: "RDB (2006)",
-      },
+      { day: 27, fact: "AR Rahman's score was recorded across Chennai, London, and Los Angeles simultaneously.", filmReference: "RDB (2006)" },
+      { day: 5, fact: "The film was in development for 8 years — Rakeysh Mehra faced 40+ rejections.", filmReference: "RDB (2006)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Jo desh ke liye jeeta hai, who kabhi nahi marta", position: "bottom-left" },
+      { type: "symbol", content: "🪔", position: "bottom-right" },
     ],
   },
-
-  // APRIL — GANGS OF WASSEYPUR (Charcoal, newspaper, gritty grey-green)
   {
     id: "gow",
     monthIndex: 3,
@@ -153,23 +134,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#1a1810",
       headerText: "#f5f3ee",
     },
-    heroImage: "https://images.unsplash.com/photo-1517315003714-a071486bd9ea?w=900&q=75",
+    heroImage: "/images/gow.jpg",
     accentPattern: "linear-gradient(135deg, #f5c6c2 0%, #c0392b 100%)",
     goldenDates: [
-      {
-        day: 5,
-        fact: "Ramadhir Singh never fires a gun himself — Kashyap shows power through command, not action.",
-        filmReference: "GOW (2012)",
-      },
-      {
-        day: 18,
-        fact: "Shot over 63 days across Dhanbad, Varanasi, and Mumbai using real locals as extras.",
-        filmReference: "GOW (2012)",
-      },
+      { day: 5, fact: "Ramadhir Singh never fires a gun himself — Kashyap shows power through command, not action.", filmReference: "GOW (2012)" },
+      { day: 18, fact: "Shot over 63 days across Dhanbad, Varanasi, and Mumbai using real locals as extras.", filmReference: "GOW (2012)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Beta, tumse na ho payega", position: "bottom-left" },
+      { type: "symbol", content: "🔫", position: "bottom-right" },
     ],
   },
-
-  // MAY — SATYA (Night blue, neon rain, Mumbai underworld)
   {
     id: "satya",
     monthIndex: 4,
@@ -195,23 +170,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#0a1428",
       headerText: "#f0f4f8",
     },
-    heroImage: "https://images.unsplash.com/photo-1502920514313-52581002a659?w=900&q=75",
+    heroImage: "/images/satya.jpg",
     accentPattern: "linear-gradient(135deg, #c8ddf5 0%, #2060b0 100%)",
     goldenDates: [
-      {
-        day: 3,
-        fact: "Manoj Bajpayee improvised 'Goli maar bheje mein' entirely on set — not in the script.",
-        filmReference: "Satya (1998)",
-      },
-      {
-        day: 21,
-        fact: "RGV shot the entire film in real Mumbai chawls — residents walked into live shots.",
-        filmReference: "Satya (1998)",
-      },
+      { day: 3, fact: "Manoj Bajpayee improvised 'Goli maar bheje mein' entirely on set — not in the script.", filmReference: "Satya (1998)" },
+      { day: 21, fact: "RGV shot the entire film in real Mumbai chawls — residents walked into live shots.", filmReference: "Satya (1998)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Mumbai ka king kaun?", position: "bottom-left" },
+      { type: "symbol", content: "🌃", position: "bottom-right" },
     ],
   },
-
-  // JUNE — DEVDAS (Purple, marigold, opulent)
   {
     id: "devdas",
     monthIndex: 5,
@@ -220,7 +189,7 @@ export const FILM_THEMES: readonly FilmTheme[] = [
     year: 2002,
     director: "Sanjay Leela Bhansali",
     tagline: "A love that consumed everything.",
-    quote: "Ek baar jo maine commitment kar li, toh main apne aap ki bhi nahi sunta.",
+    quote: "Woh aafat ki parkaala thi, main deewana tha.",
     mood: "ornate",
     colors: {
       paper: "#fdf4fb",
@@ -237,23 +206,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#8b20a0",
       headerText: "#fdf4fb",
     },
-    heroImage: "https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=900&q=75",
+    heroImage: "/images/devdas.jpg",
     accentPattern: "linear-gradient(135deg, #e8c0f0 0%, #8b20a0 100%)",
     goldenDates: [
-      {
-        day: 12,
-        fact: "Bhansali used 200kg of real rose petals in one chandelier scene — artificial ones fell wrong.",
-        filmReference: "Devdas (2002)",
-      },
-      {
-        day: 28,
-        fact: "The 19th-century Calcutta street set was 400 feet long and took 11 months to construct.",
-        filmReference: "Devdas (2002)",
-      },
+      { day: 12, fact: "Bhansali used 200kg of real rose petals in one chandelier scene.", filmReference: "Devdas (2002)" },
+      { day: 28, fact: "The 19th-century Calcutta street set was 400 feet long and took 11 months to construct.", filmReference: "Devdas (2002)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Woh toh khel rahi thi paro ke saath...", position: "bottom-left" },
+      { type: "symbol", content: "🌹", position: "bottom-right" },
     ],
   },
-
-  // JULY — JAB TAK HAI JAAN (Icy blue, snow white, military clean)
   {
     id: "jthj",
     monthIndex: 6,
@@ -279,23 +242,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#0070a0",
       headerText: "#f0f7ff",
     },
-    heroImage: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=900&q=75",
+    heroImage: "/images/jthj.jpg",
     accentPattern: "linear-gradient(135deg, #b8ddf0 0%, #0070a0 100%)",
     goldenDates: [
-      {
-        day: 13,
-        fact: "The Chhalla sequence was filmed at −15°C in Ladakh. The visible breath mist is real.",
-        filmReference: "JTHJ (2012)",
-      },
-      {
-        day: 25,
-        fact: "Yash Chopra passed away 12 days before release — never saw the audience reaction.",
-        filmReference: "JTHJ (2012)",
-      },
+      { day: 13, fact: "The Chhalla sequence was filmed at −15°C in Ladakh. The visible breath mist is real.", filmReference: "JTHJ (2012)" },
+      { day: 25, fact: "Yash Chopra passed away 12 days before release — never saw the audience reaction.", filmReference: "JTHJ (2012)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Jab tak hai jaan, jab tak hai jaan...", position: "bottom-left" },
+      { type: "symbol", content: "❄️", position: "bottom-right" },
     ],
   },
-
-  // AUGUST — LAGAAN (Ochre fields, cricket whites, dusty earth)
   {
     id: "lagaan",
     monthIndex: 7,
@@ -321,23 +278,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#c07a00",
       headerText: "#fdf8ee",
     },
-    heroImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=900&q=75",
+    heroImage: "/images/lagaan.jpg",
     accentPattern: "linear-gradient(135deg, #f0d898 0%, #c07a00 100%)",
     goldenDates: [
-      {
-        day: 15,
-        fact: "The climax cricket match took 53 days to film in Bhuj — longest single-sequence shoot in Bollywood.",
-        filmReference: "Lagaan (2001)",
-      },
-      {
-        day: 7,
-        fact: "Aamir Khan produced it himself after every major studio passed. Budget: ₹25 crore.",
-        filmReference: "Lagaan (2001)",
-      },
+      { day: 15, fact: "The climax cricket match took 53 days to film in Bhuj.", filmReference: "Lagaan (2001)" },
+      { day: 7, fact: "Aamir Khan produced it himself after every major studio passed. Budget: ₹25 crore.", filmReference: "Lagaan (2001)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Lagaan maafi, ya hum kheleinge!", position: "bottom-left" },
+      { type: "symbol", content: "🏏", position: "bottom-right" },
     ],
   },
-
-  // SEPTEMBER — 3 IDIOTS (Teal Pangong lake, fresh white, green campus)
   {
     id: "three-idiots",
     monthIndex: 8,
@@ -346,7 +297,7 @@ export const FILM_THEMES: readonly FilmTheme[] = [
     year: 2009,
     director: "Rajkumar Hirani",
     tagline: "All is well.",
-    quote: "All izz well... Aal izz well...",
+    quote: "Aal izz well...",
     mood: "joyful",
     colors: {
       paper: "#f0fafa",
@@ -363,23 +314,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#008090",
       headerText: "#f0fafa",
     },
-    heroImage: "https://images.unsplash.com/photo-1495653797063-114787b77b23?w=900&q=75",
+    heroImage: "/images/three-idiots.jpg",
     accentPattern: "linear-gradient(135deg, #a8dde8 0%, #008090 100%)",
     goldenDates: [
-      {
-        day: 25,
-        fact: "'All izz well' was added in post-production — the original script had no catchphrase.",
-        filmReference: "3 Idiots (2009)",
-      },
-      {
-        day: 10,
-        fact: "Pangong Lake scenes filmed at 14,000 feet altitude. Crew required oxygen tanks.",
-        filmReference: "3 Idiots (2009)",
-      },
+      { day: 25, fact: "'All izz well' was added in post-production — the original script had no catchphrase.", filmReference: "3 Idiots (2009)" },
+      { day: 10, fact: "Pangong Lake scenes filmed at 14,000 feet altitude. Crew required oxygen tanks.", filmReference: "3 Idiots (2009)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Aal izz well... aal izz well!", position: "bottom-left" },
+      { type: "symbol", content: "🎓", position: "bottom-right" },
     ],
   },
-
-  // OCTOBER — MUGHAL-E-AZAM (Marble white, gold, classical black)
   {
     id: "mughal-e-azam",
     monthIndex: 9,
@@ -405,23 +350,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#1a1a10",
       headerText: "#fafaf5",
     },
-    heroImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=75",
+    heroImage: "/images/mughal-e-azam.jpg",
     accentPattern: "linear-gradient(135deg, #f0e0a0 0%, #c09010 100%)",
     goldenDates: [
-      {
-        day: 5,
-        fact: "K. Asif used 500 tonnes of real marble from Rajasthan — refused painted backdrops entirely.",
-        filmReference: "Mughal-E-Azam (1960)",
-      },
-      {
-        day: 19,
-        fact: "Took 9 years to complete. The war sequence used 8,000 extras — largest ever in Indian cinema.",
-        filmReference: "Mughal-E-Azam (1960)",
-      },
+      { day: 5, fact: "K. Asif used 500 tonnes of real marble from Rajasthan — refused painted backdrops entirely.", filmReference: "Mughal-E-Azam (1960)" },
+      { day: 19, fact: "Took 9 years to complete. The war sequence used 8,000 extras.", filmReference: "Mughal-E-Azam (1960)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Mohabbat zindabad!", position: "bottom-left" },
+      { type: "symbol", content: "👑", position: "bottom-right" },
     ],
   },
-
-  // NOVEMBER — DIL CHAHTA HAI (Goa blue, fresh citrus, modern light)
   {
     id: "dil-chahta-hai",
     monthIndex: 10,
@@ -447,23 +386,17 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#20a060",
       headerText: "#f0f9f0",
     },
-    heroImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=75",
+    heroImage: "/images/dil-chahta-hai.jpg",
     accentPattern: "linear-gradient(135deg, #a8e8c0 0%, #20a060 100%)",
     goldenDates: [
-      {
-        day: 10,
-        fact: "DCH ended Bollywood's family-drama era. Farhan Akhtar was 26 when he wrote and directed it.",
-        filmReference: "DCH (2001)",
-      },
-      {
-        day: 23,
-        fact: "The Goa sequences were entirely improvised. Akhtar told the leads to act like a real road trip.",
-        filmReference: "DCH (2001)",
-      },
+      { day: 10, fact: "DCH ended Bollywood's family-drama era. Farhan Akhtar was 26 when he wrote and directed it.", filmReference: "DCH (2001)" },
+      { day: 23, fact: "The Goa sequences were entirely improvised. Akhtar told the leads to act like a real road trip.", filmReference: "DCH (2001)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Dil chahta hai... kuch khaas karna!", position: "bottom-left" },
+      { type: "symbol", content: "🌊", position: "bottom-right" },
     ],
   },
-
-  // DECEMBER — BAJIRAO MASTANI (Deep crimson, gold, warrior elegance)
   {
     id: "bajirao",
     monthIndex: 11,
@@ -489,19 +422,15 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#c02010",
       headerText: "#fff5f0",
     },
-    heroImage: "https://images.unsplash.com/photo-1477840539360-af932bfbc467?w=900&q=75",
+    heroImage: "/images/bajirao.jpg",
     accentPattern: "linear-gradient(135deg, #f5c0b8 0%, #c02010 100%)",
     goldenDates: [
-      {
-        day: 18,
-        fact: "Deepika Padukone trained 6 hours daily for 8 months to perform Mohe Rang Do Laal live.",
-        filmReference: "Bajirao Mastani (2015)",
-      },
-      {
-        day: 4,
-        fact: "Bhansali spent ₹2 crore on Mastani's palace set — demolished immediately after filming.",
-        filmReference: "Bajirao Mastani (2015)",
-      },
+      { day: 18, fact: "Deepika Padukone trained 6 hours daily for 8 months to perform Mohe Rang Do Laal live.", filmReference: "Bajirao Mastani (2015)" },
+      { day: 4, fact: "Bhansali spent ₹2 crore on Mastani's palace set — demolished immediately after filming.", filmReference: "Bajirao Mastani (2015)" },
+    ],
+    easterEggs: [
+      { type: "dialogue", content: "Pinga... pinga ga... pinga ga pori!", position: "bottom-left" },
+      { type: "symbol", content: "⚔️", position: "bottom-right" },
     ],
   },
 ] as const;

@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { MonthIndex } from "@/types/theme";
@@ -10,20 +12,20 @@ interface CalendarStore {
   selectionPhase: SelectionPhase;
   hoveredDate: Date | null;
   notes: Record<string, MonthNote>;
+  isNoteDialogOpen: boolean;
 
   goToNextMonth: () => void;
   goToPrevMonth: () => void;
-
   handleDateClick: (date: Date) => void;
   handleDateHover: (date: Date | null) => void;
   clearSelection: () => void;
   toggleMarkDate: (day: number, monthIndex: MonthIndex, year: number) => void;
-
   updateNote: (monthIndex: MonthIndex, year: number, content: string) => void;
   clearNote: (monthIndex: MonthIndex, year: number) => void;
-
   getNote: (monthIndex: MonthIndex, year: number) => MonthNote | null;
   getPreviewRange: () => DateRange;
+  openNoteDialog: () => void;
+  closeNoteDialog: () => void;
 }
 
 function noteKey(monthIndex: MonthIndex, year: number): string {
@@ -49,9 +51,15 @@ export const useCalendarStore = create<CalendarStore>()(
       selectionPhase: "idle" as SelectionPhase,
       hoveredDate: null,
       notes: {},
+      isNoteDialogOpen: false,
 
       goToNextMonth: () => {
         const { activeMonthIndex, activeYear } = get();
+        set({
+          selectedRange: { start: null, end: null },
+          selectionPhase: "idle",
+          hoveredDate: null,
+        });
         if (activeMonthIndex === 11) {
           set({ activeMonthIndex: 0 as MonthIndex, activeYear: activeYear + 1 });
         } else {
@@ -61,6 +69,11 @@ export const useCalendarStore = create<CalendarStore>()(
 
       goToPrevMonth: () => {
         const { activeMonthIndex, activeYear } = get();
+        set({
+          selectedRange: { start: null, end: null },
+          selectionPhase: "idle",
+          hoveredDate: null,
+        });
         if (activeMonthIndex === 0) {
           set({ activeMonthIndex: 11 as MonthIndex, activeYear: activeYear - 1 });
         } else {
@@ -69,9 +82,11 @@ export const useCalendarStore = create<CalendarStore>()(
       },
 
       handleDateClick: (date: Date) => {
-        const { selectionPhase, selectedRange } = get();
+        const state = get();
+        const { selectionPhase, selectedRange } = state;
 
-        if (selectionPhase === "idle") {
+        if (selectionPhase === "idle" || !selectedRange.start) {
+          // Start fresh selection
           set({
             selectedRange: { start: date, end: null },
             selectionPhase: "selecting-end",
@@ -80,19 +95,24 @@ export const useCalendarStore = create<CalendarStore>()(
           return;
         }
 
-        if (selectionPhase === "selecting-end") {
-          const { start } = selectedRange;
-          if (!start) {
-            set({ selectedRange: { start: date, end: null }, selectionPhase: "selecting-end" });
-            return;
-          }
+        // We have a start, now pick end
+        if (selectionPhase === "selecting-end" && selectedRange.start) {
+          const start = selectedRange.start;
 
+          // Click same day = clear
           if (isSameDay(date, start)) {
-            set({ selectedRange: { start: null, end: null }, selectionPhase: "idle", hoveredDate: null });
+            set({
+              selectedRange: { start: null, end: null },
+              selectionPhase: "idle",
+              hoveredDate: null,
+            });
             return;
           }
 
-          const [finalStart, finalEnd] = date < start ? [date, start] : [start, date];
+          const startTime = start.getTime();
+          const endTime = date.getTime();
+          const [finalStart, finalEnd] =
+            endTime >= startTime ? [start, date] : [date, start];
 
           set({
             selectedRange: { start: finalStart, end: finalEnd },
@@ -103,11 +123,18 @@ export const useCalendarStore = create<CalendarStore>()(
       },
 
       handleDateHover: (date: Date | null) => {
-        set({ hoveredDate: date });
+        const { selectionPhase } = get();
+        if (selectionPhase === "selecting-end") {
+          set({ hoveredDate: date });
+        }
       },
 
       clearSelection: () => {
-        set({ selectedRange: { start: null, end: null }, selectionPhase: "idle", hoveredDate: null });
+        set({
+          selectedRange: { start: null, end: null },
+          selectionPhase: "idle",
+          hoveredDate: null,
+        });
       },
 
       toggleMarkDate: (day: number, monthIndex: MonthIndex, year: number) => {
@@ -165,21 +192,50 @@ export const useCalendarStore = create<CalendarStore>()(
 
       getPreviewRange: (): DateRange => {
         const { selectionPhase, selectedRange, hoveredDate } = get();
-        if (selectionPhase !== "selecting-end") return selectedRange;
-        const { start } = selectedRange;
-        if (!start || !hoveredDate) return selectedRange;
-        const [pStart, pEnd] = hoveredDate < start ? [hoveredDate, start] : [start, hoveredDate];
+        if (selectionPhase !== "selecting-end" || !selectedRange.start || !hoveredDate) {
+          return selectedRange;
+        }
+        const start = selectedRange.start;
+        const [pStart, pEnd] =
+          hoveredDate.getTime() >= start.getTime()
+            ? [start, hoveredDate]
+            : [hoveredDate, start];
         return { start: pStart, end: pEnd };
       },
+
+      openNoteDialog: () => set({ isNoteDialogOpen: true }),
+      closeNoteDialog: () => set({ isNoteDialogOpen: false }),
     }),
     {
-      name: "cinecalendar-v2",
-      storage: createJSONStorage(() => localStorage),
+      name: "cinecalendar-v3",
+      storage: createJSONStorage(() => {
+        if (typeof window === "undefined") return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        };
+        return localStorage;
+      }),
       partialize: (state) => ({
         notes: state.notes,
         activeMonthIndex: state.activeMonthIndex,
         activeYear: state.activeYear,
       }),
+      // Rehydrate dates properly
+      merge: (persistedState: unknown, currentState: CalendarStore) => {
+        const persisted = persistedState as Partial<CalendarStore> & {
+          notes?: Record<string, { monthIndex: MonthIndex; year: number; content: string; rangeLabel: string | null; markedDates: number[] }>;
+        };
+        return {
+          ...currentState,
+          ...(persisted || {}),
+          // Always reset selection state on load
+          selectedRange: { start: null, end: null },
+          selectionPhase: "idle" as SelectionPhase,
+          hoveredDate: null,
+          isNoteDialogOpen: false,
+        };
+      },
     }
   )
 );
@@ -191,13 +247,13 @@ export function selectDateSelectionState(
   const { start, end } = range;
   if (!start) return "none";
 
-  const isSame = (a: Date, b: Date) =>
+  const sameDay = (a: Date, b: Date) =>
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 
-  if (isSame(date, start)) return "start";
-  if (end && isSame(date, end)) return "end";
+  if (sameDay(date, start)) return "start";
+  if (end && sameDay(date, end)) return "end";
   if (end) {
     const t = date.getTime();
     if (t > start.getTime() && t < end.getTime()) return "in-range";
