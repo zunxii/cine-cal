@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo} from "react";
+import { useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { DayCell } from "./DayCell";
@@ -73,7 +73,7 @@ export function CalendarGrid({
             initial={{ opacity: 0, height: 0, marginBottom: 0 }}
             animate={{ opacity: 1, height: "auto", marginBottom: 12 }}
             exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-            className="flex items-center justify-between rounded-lg px-3 py-1.5 overflow-hidden"
+            className="flex items-center justify-between rounded-lg px-3 py-2 overflow-hidden"
             style={{
               background: theme.colors.accentSoft,
               border: `1px solid ${theme.colors.border}`,
@@ -82,15 +82,19 @@ export function CalendarGrid({
             <div className="flex items-center gap-2">
               {selectionPhase === "selecting-end" && (
                 <motion.div
-                  animate={{ scale: [1, 1.5, 1] }}
-                  transition={{ duration: 1.0, repeat: Infinity }}
+                  animate={{ scale: [1, 1.6, 1] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
                   className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                   style={{ background: theme.colors.accent }}
                 />
               )}
               <span
-                className="text-[10px] uppercase tracking-widest font-bold"
-                style={{ color: theme.colors.accent }}
+                className="text-[10px] uppercase tracking-widest font-semibold"
+                style={{
+                  color: theme.colors.accent,
+                  fontFamily: "'Josefin Sans', sans-serif",
+                  letterSpacing: "0.18em",
+                }}
               >
                 {selectionPhase === "selecting-end"
                   ? "Pick an end date"
@@ -99,7 +103,7 @@ export function CalendarGrid({
             </div>
             <button
               onClick={onClearSelection}
-              className="rounded-full p-0.5 transition-opacity hover:opacity-70"
+              className="rounded-full p-0.5 transition-opacity hover:opacity-60"
               style={{ color: theme.colors.inkLight }}
             >
               <X size={10} />
@@ -113,9 +117,14 @@ export function CalendarGrid({
         {WEEKDAY_LABELS.map((label, i) => (
           <div
             key={label}
-            className="text-center py-1.5 text-[9px] font-bold uppercase tracking-[0.2em]"
+            className="text-center py-1.5"
             style={{
+              fontSize: "9px",
+              fontWeight: 700,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
               color: i === 0 || i === 6 ? theme.colors.accent : theme.colors.inkLight,
+              fontFamily: "'Josefin Sans', sans-serif",
             }}
           >
             {label}
@@ -124,7 +133,10 @@ export function CalendarGrid({
       </div>
 
       {/* Divider */}
-      <div className="mb-2" style={{ borderTop: `1px solid ${theme.colors.borderLight}` }} />
+      <div
+        className="mb-2"
+        style={{ borderTop: `1px solid ${theme.colors.borderLight}` }}
+      />
 
       {/* Calendar grid */}
       <div className="flex flex-col gap-[2px]">
@@ -158,19 +170,22 @@ export function CalendarGrid({
         style={{ borderTop: `1px dashed ${theme.colors.borderLight}` }}
       >
         {[
-          { label: "Selected", fill: true, ring: false },
-          { label: "Today", fill: false, ring: true },
-          { label: "✦ Film trivia", fill: false, ring: false, gold: true },
-          { label: "Marked", fill: false, ring: false, dot: true },
+          { label: "Selected",    fill: true,  ring: false },
+          { label: "Today",       fill: false, ring: true  },
+          { label: "✦ Trivia",    fill: false, ring: false, gold: true },
+          { label: "Marked",      fill: false, ring: false, dot: true  },
         ].map((item) => (
           <div key={item.label} className="flex items-center gap-1.5">
             {item.dot ? (
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: theme.colors.accent }} />
+              <div
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: theme.colors.accent }}
+              />
             ) : (
               <div
                 className="w-3 h-3 rounded"
                 style={{
-                  background: item.fill ? theme.colors.accent : "transparent",
+                  background:  item.fill ? theme.colors.accent : "transparent",
                   border: item.ring
                     ? `2px solid ${theme.colors.accent}`
                     : item.fill
@@ -180,18 +195,28 @@ export function CalendarGrid({
               />
             )}
             <span
-              className="text-[9px] uppercase tracking-[0.15em]"
-              style={{ color: theme.colors.inkLight }}
+              style={{
+                fontSize: "8px",
+                textTransform: "uppercase",
+                letterSpacing: "0.15em",
+                color: theme.colors.inkLight,
+                fontFamily: "'Josefin Sans', sans-serif",
+              }}
             >
               {item.label}
             </span>
           </div>
         ))}
         <span
-          className="text-[8px] ml-auto hidden md:block"
-          style={{ color: `${theme.colors.inkLight}70` }}
+          className="ml-auto hidden md:block"
+          style={{
+            fontSize: "8px",
+            color: `${theme.colors.inkLight}60`,
+            fontFamily: "'Josefin Sans', sans-serif",
+            letterSpacing: "0.06em",
+          }}
         >
-          Right-click to mark · hover ✦ for trivia
+          Right-click to mark · Hover ✦ for trivia
         </span>
       </div>
     </div>

@@ -33,9 +33,17 @@ export function NoteDialog({
 
   useEffect(() => {
     if (isOpen && textRef.current) {
-      setTimeout(() => textRef.current?.focus(), 100);
+      setTimeout(() => textRef.current?.focus(), 120);
     }
   }, [isOpen]);
+
+  const labelStyle = {
+    fontFamily: "'Josefin Sans', sans-serif",
+    fontSize: "8px",
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.22em",
+    fontWeight: 700,
+  };
 
   return (
     <AnimatePresence>
@@ -47,35 +55,33 @@ export function NoteDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.22 }}
             onClick={onClose}
             style={{
-              background: `rgba(0,0,0,0.4)`,
-              backdropFilter: "blur(4px)",
+              background: "rgba(0,0,0,0.45)",
+              backdropFilter: "blur(5px)",
             }}
           />
 
           {/* Dialog */}
-          <motion.div
-            className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none"
-          >
+          <motion.div className="fixed z-50 inset-0 flex items-center justify-center p-4 pointer-events-none">
             <motion.div
               className="pointer-events-auto w-full max-w-md rounded-2xl overflow-hidden flex flex-col"
               style={{
                 background: theme.colors.paper,
                 border: `2px solid ${theme.colors.border}`,
-                boxShadow: `0 25px 80px ${theme.colors.shadow}, 0 8px 32px rgba(0,0,0,0.2)`,
-                maxHeight: "80vh",
+                boxShadow: `0 30px 80px ${theme.colors.shadow}, 0 10px 30px rgba(0,0,0,0.20)`,
+                maxHeight: "82vh",
               }}
-              initial={{ opacity: 0, scale: 0.88, y: 30 }}
+              initial={{ opacity: 0, scale: 0.86, y: 32 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 20 }}
-              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              exit={{ opacity: 0, scale: 0.9, y: 24 }}
+              transition={{ type: "spring", stiffness: 340, damping: 26 }}
             >
-              {/* Decorative top strip */}
+              {/* Accent top strip */}
               <div
-                className="h-1 w-full"
-                style={{ background: theme.colors.headerBg }}
+                className="h-1.5 w-full"
+                style={{ background: `linear-gradient(to right, ${theme.colors.accent}, ${theme.colors.gold})` }}
               />
 
               {/* Header */}
@@ -85,16 +91,15 @@ export function NoteDialog({
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <p
-                      className="text-[8px] uppercase tracking-[0.35em] font-bold"
-                      style={{ color: theme.colors.inkLight }}
-                    >
+                    <p style={{ ...labelStyle, color: theme.colors.inkLight }}>
                       Director&apos;s Notebook
                     </p>
                     <h3
-                      className="text-xl mt-0.5 leading-tight font-semibold"
+                      className="mt-0.5 leading-tight"
                       style={{
-                        fontFamily: "'Crimson Text', Georgia, serif",
+                        fontFamily: "'Playfair Display', Georgia, serif",
+                        fontSize: "20px",
+                        fontWeight: 600,
                         color: theme.colors.ink,
                       }}
                     >
@@ -103,7 +108,7 @@ export function NoteDialog({
                   </div>
                   <button
                     onClick={onClose}
-                    className="rounded-full p-1.5 transition-opacity hover:opacity-60 flex-shrink-0"
+                    className="rounded-full p-1.5 hover:opacity-60 transition-opacity flex-shrink-0"
                     style={{
                       color: theme.colors.inkLight,
                       background: theme.colors.paperAlt,
@@ -116,32 +121,41 @@ export function NoteDialog({
 
               {/* Film quote banner */}
               <div
-                className="px-5 py-2.5"
+                className="px-5 py-3"
                 style={{
-                  background: theme.colors.accentSoft,
+                  background: `linear-gradient(to right, ${theme.colors.accentSoft}60, ${theme.colors.accentSoft}20)`,
                   borderBottom: `1px dashed ${theme.colors.border}`,
                 }}
               >
                 <p
-                  className="text-[10px] italic leading-relaxed"
+                  className="italic leading-relaxed"
                   style={{
                     color: theme.colors.inkLight,
-                    fontFamily: "'Crimson Text', Georgia, serif",
+                    fontFamily: "'Lora', Georgia, serif",
+                    fontSize: "10px",
+                    opacity: 0.9,
                   }}
                 >
                   &ldquo;{theme.quote}&rdquo;
                 </p>
                 <p
-                  className="text-[8px] mt-1 uppercase tracking-widest font-bold"
-                  style={{ color: theme.colors.accent }}
+                  className="mt-1 uppercase"
+                  style={{
+                    ...labelStyle,
+                    color: theme.colors.accent,
+                    letterSpacing: "0.18em",
+                  }}
                 >
                   — {theme.shortTitle}
                 </p>
               </div>
 
               {/* Lined paper textarea */}
-              <div className="relative flex-1 overflow-hidden" style={{ minHeight: "220px", maxHeight: "280px" }}>
-                {/* Lined paper effect */}
+              <div
+                className="relative flex-1 overflow-hidden"
+                style={{ minHeight: "220px", maxHeight: "280px" }}
+              >
+                {/* Horizontal lines */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
@@ -149,30 +163,30 @@ export function NoteDialog({
                       to bottom,
                       transparent,
                       transparent 31px,
-                      ${theme.colors.borderLight} 31px,
-                      ${theme.colors.borderLight} 32px
+                      ${theme.colors.borderLight}90 31px,
+                      ${theme.colors.borderLight}90 32px
                     )`,
                     backgroundPositionY: "8px",
-                    opacity: 0.7,
                   }}
                 />
 
                 {/* Red margin line */}
                 <div
                   className="absolute top-0 bottom-0 left-10 w-px pointer-events-none"
-                  style={{ background: `${theme.colors.accent}25` }}
+                  style={{ background: `${theme.colors.accent}22` }}
                 />
 
                 {/* Placeholder */}
                 {!note?.content && (
                   <p
-                    className="absolute top-4 left-12 text-sm pointer-events-none italic select-none"
+                    className="absolute top-4 left-12 pointer-events-none italic select-none"
                     style={{
-                      color: `${theme.colors.inkLight}50`,
+                      color: `${theme.colors.inkLight}40`,
                       fontFamily: "'Kalam', cursive",
+                      fontSize: "13px",
                     }}
                   >
-                    Write your scene notes...
+                    Write your scene notes…
                   </p>
                 )}
 
@@ -180,10 +194,11 @@ export function NoteDialog({
                   ref={textRef}
                   value={note?.content ?? ""}
                   onChange={(e) => onUpdate(e.target.value)}
-                  className="absolute inset-0 w-full h-full resize-none bg-transparent border-none outline-none pl-12 pr-4 py-4 text-sm"
+                  className="absolute inset-0 w-full h-full resize-none bg-transparent border-none outline-none pl-12 pr-4 py-4"
                   style={{
                     color: theme.colors.ink,
                     fontFamily: "'Kalam', cursive",
+                    fontSize: "13px",
                     caretColor: theme.colors.accent,
                     lineHeight: "32px",
                   }}
@@ -196,22 +211,27 @@ export function NoteDialog({
                 style={{ borderTop: `1px solid ${theme.colors.borderLight}` }}
               >
                 <span
-                  className="text-[8px] uppercase tracking-widest"
-                  style={{ color: `${theme.colors.borderLight}` }}
+                  style={{
+                    ...labelStyle,
+                    color: theme.colors.borderLight,
+                    fontSize: "7px",
+                  }}
                 >
-                  autosaved · local storage
+                  autosaved · local
                 </span>
 
                 <div className="flex items-center gap-2">
                   {note?.content && (
                     <button
-                      onClick={() => {
-                        onClear();
-                      }}
-                      className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-opacity hover:opacity-70"
+                      onClick={() => { onClear(); }}
+                      className="flex items-center gap-1 px-2 py-1 rounded-lg hover:opacity-70 transition-opacity"
                       style={{
                         color: theme.colors.inkLight,
                         background: theme.colors.paperAlt,
+                        fontFamily: "'Josefin Sans', sans-serif",
+                        fontSize: "9px",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
                       }}
                     >
                       <Trash2 size={10} /> Clear
@@ -219,10 +239,15 @@ export function NoteDialog({
                   )}
                   <button
                     onClick={onClose}
-                    className="text-[10px] px-3 py-1.5 rounded-lg font-semibold transition-opacity hover:opacity-80"
+                    className="px-3 py-1.5 rounded-lg hover:opacity-80 transition-opacity"
                     style={{
                       background: theme.colors.headerBg,
                       color: theme.colors.headerText,
+                      fontFamily: "'Josefin Sans', sans-serif",
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
                     }}
                   >
                     Done

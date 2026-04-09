@@ -3,12 +3,11 @@
 import React, {
   useState,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useCallback,
   useRef,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
 import { useCalendarStore } from "@/store/calendarStore";
 import { getThemeByMonth } from "@/data/theme";
@@ -21,15 +20,54 @@ import { NoteDialog } from "@/components/calendar/NoteDialog";
 import { DateContextMenu } from "@/components/calendar/DateContextMenu";
 import { EasterEggs } from "@/components/calendar/EasterEggs";
 import { NotePreview } from "@/components/calendar/NotePreview";
-import type { FilmTheme, MonthIndex } from "@/types/theme";
+import type { FilmTheme } from "@/types/theme";
+import type { MonthIndex } from "@/types/theme";
 
-// ── Page-flip animation variants ──────────────────────────────────────────
+// ─── Cinematic page‑flip variants ─────────────────────────────────────────────
 const pageVariants = {
-  enterFromRight: { opacity: 0, rotateY: -18, x: 80, scale: 0.96 },
-  enterFromLeft:  { opacity: 0, rotateY:  18, x: -80, scale: 0.96 },
-  center:         { opacity: 1, rotateY:   0, x:   0, scale: 1 },
-  exitToLeft:     { opacity: 0, rotateY:  18, x: -80, scale: 0.96 },
-  exitToRight:    { opacity: 0, rotateY: -18, x:  80, scale: 0.96 },
+  // Forward navigation (next month)
+  enterRight: {
+    opacity: 0,
+    x: 80,
+    rotateY: 18,
+    scale: 0.96,
+    transformOrigin: "left center",
+  },
+  exitLeft: {
+    opacity: 0,
+    x: -80,
+    rotateY: -18,
+    scale: 0.96,
+    transformOrigin: "right center",
+  },
+  // Backward navigation (prev month)
+  enterLeft: {
+    opacity: 0,
+    x: -80,
+    rotateY: -18,
+    scale: 0.96,
+    transformOrigin: "right center",
+  },
+  exitRight: {
+    opacity: 0,
+    x: 80,
+    rotateY: 18,
+    scale: 0.96,
+    transformOrigin: "left center",
+  },
+  center: {
+    opacity: 1,
+    x: 0,
+    rotateY: 0,
+    scale: 1,
+    transformOrigin: "center center",
+  },
+};
+
+const pageTransition = {
+  duration: 0.52,
+  ease: [0.22, 1, 0.36, 1],
+  opacity: { duration: 0.38 },
 };
 
 export default function CalendarPage() {
@@ -53,63 +91,43 @@ export default function CalendarPage() {
   } = store;
 
   const selectedRange = store.selectedRange;
-  const previewRange  = store.getPreviewRange();
+  const previewRange = store.getPreviewRange();
 
-  // ── Theme state ───────────────────────────────────────────────────────────
-  // Derive theme synchronously to avoid flash; keep ref for direction tracking
   const [theme, setTheme] = useState<FilmTheme>(() =>
     getThemeByMonth(activeMonthIndex)
   );
-  const prevMonthRef = useRef(activeMonthIndex);
   const [direction, setDirection] = useState<"left" | "right">("right");
-
-  // ── Context-menu state ────────────────────────────────────────────────────
+  const [prevMonthIndex, setPrevMonthIndex] = useState(activeMonthIndex);
   const [contextMenu, setContextMenu] = useState<{
     pos: { x: number; y: number };
     dayNumber: number;
     date: Date;
   } | null>(null);
 
-  // ── Update theme + direction when month changes ───────────────────────────
-  // Using useLayoutEffect (sync) avoids the "setState inside effect" cascade
-  // warning because layout effects run before the browser paints — they are
-  // conceptually part of the render cycle, not external synchronisation.
-  useLayoutEffect(() => {
-    const prev = prevMonthRef.current;
-    const next = activeMonthIndex;
-    if (prev === next) return;
+  // Track key for AnimatePresence (direction-aware)
+  const [flipKey, setFlipKey] = useState(0);
 
-    const goingRight =
-      next > prev || (prev === 11 && next === 0);
-    const goingLeft  =
-      next < prev || (prev === 0  && next === 11);
+  // Update theme when month changes
+  useEffect(() => {
+    const newTheme = getThemeByMonth(activeMonthIndex);
+    const isForward =
+      (activeMonthIndex > prevMonthIndex) ||
+      (prevMonthIndex === 11 && activeMonthIndex === 0);
+    setDirection(isForward ? "right" : "left");
+    setTheme(newTheme);
+    setPrevMonthIndex(activeMonthIndex);
+    injectTheme(newTheme);
+    setFlipKey((k) => k + 1);
+  }, [activeMonthIndex, activeYear]);
 
-    setDirection(goingRight ? "right" : goingLeft ? "left" : "right");
-    setTheme(getThemeByMonth(next));
-    prevMonthRef.current = next;
-  }, [activeMonthIndex]);
-
-  // ── Inject CSS custom props on theme change ───────────────────────────────
+  // Inject theme on mount
   useEffect(() => {
     injectTheme(theme);
-  }, [theme]);
+  }, []);
 
-  // ── Initial injection on mount ────────────────────────────────────────────
-  useEffect(() => {
-    injectTheme(getThemeByMonth(activeMonthIndex));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // intentionally empty — mount only
-
-  // ── Notes & marked dates ──────────────────────────────────────────────────
   const note = getNote(activeMonthIndex as MonthIndex, activeYear);
+  const markedDates = note?.markedDates ?? [];
 
-  // Wrap markedDates init in its own useMemo to stabilise reference
-  const markedDates = useMemo(
-    () => note?.markedDates ?? [],
-    [note]
-  );
-
-  // ── Build calendar grid ───────────────────────────────────────────────────
   const weeks = useMemo(() => {
     const baseWeeks = buildCalendarDays(activeMonthIndex, activeYear);
     const goldenSet = new Set(theme.goldenDates.map((g) => g.day));
@@ -119,14 +137,13 @@ export default function CalendarPage() {
       week.map((day) => ({
         ...day,
         isGoldenDate: day.isCurrentMonth && goldenSet.has(day.dayNumber),
-        goldenFact:    goldenMap.get(day.dayNumber)?.fact,
+        goldenFact: goldenMap.get(day.dayNumber)?.fact,
         goldenFilmRef: goldenMap.get(day.dayNumber)?.filmReference,
-        isMarked:      day.isCurrentMonth && markedDates.includes(day.dayNumber),
+        isMarked: day.isCurrentMonth && markedDates.includes(day.dayNumber),
       }))
     );
   }, [activeMonthIndex, activeYear, theme, markedDates]);
 
-  // ── Callbacks ─────────────────────────────────────────────────────────────
   const handleContextMenu = useCallback(
     (e: React.MouseEvent, date: Date, dayNumber: number) => {
       e.preventDefault();
@@ -142,59 +159,92 @@ export default function CalendarPage() {
     [toggleMarkDate, activeMonthIndex, activeYear]
   );
 
-  // ── Background style ──────────────────────────────────────────────────────
-  const bgStyle = {
-    background: `linear-gradient(135deg, ${theme.colors.paperAlt} 0%, ${theme.colors.paper} 50%, ${theme.colors.paperAlt} 100%)`,
+  // ─── Navigation with direction tracking ────────────────────────────
+  const handleNext = useCallback(() => {
+    setDirection("right");
+    goToNextMonth();
+  }, [goToNextMonth]);
+
+  const handlePrev = useCallback(() => {
+    setDirection("left");
+    goToPrevMonth();
+  }, [goToPrevMonth]);
+
+  // ─── Keyboard navigation ───────────────────────────────────────────
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") handleNext();
+      if (e.key === "ArrowLeft") handlePrev();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [handleNext, handlePrev]);
+
+  // Dynamic page background based on theme
+  const pageStyle = {
+    background: `
+      radial-gradient(ellipse at 20% 10%, ${theme.colors.accentSoft}40 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, ${theme.colors.accent}20 0%, transparent 50%),
+      linear-gradient(160deg, ${theme.colors.paperAlt} 0%, ${theme.colors.paper} 50%, ${theme.colors.paperAlt} 100%)
+    `,
   };
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center p-3 md:p-6 lg:p-8 transition-colors duration-700"
-      style={bgStyle}
+      className="min-h-screen w-full flex items-center justify-center p-3 md:p-6 lg:p-8"
+      style={pageStyle}
       onClick={() => contextMenu && setContextMenu(null)}
     >
-      {/* Paper grain overlay */}
-      <div className="paper-grain" />
+      {/* Animated paper grain overlay */}
+      <div
+        className="film-grain-overlay pointer-events-none fixed inset-0 z-0 opacity-[0.04]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
 
-      {/* Calendar container */}
-      <div className="calendar-wrapper relative w-full max-w-4xl">
-        <AnimatePresence mode="wait" custom={direction}>
+      {/* Calendar stack container */}
+      <div
+        className="calendar-stack-wrapper relative w-full max-w-4xl"
+        style={{ perspective: "1400px", marginBottom: "20px" }}
+      >
+        {/* Stack layer CSS vars from theme */}
+        <style>{`
+          .calendar-stack-wrapper::before,
+          .calendar-stack-wrapper::after {
+            background: ${theme.colors.paperAlt};
+            border-color: ${theme.colors.borderLight};
+          }
+        `}</style>
+
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={`${activeMonthIndex}-${activeYear}`}
-            custom={direction}
-            variants={pageVariants}
-            initial={direction === "right" ? "enterFromRight" : "enterFromLeft"}
-            animate="center"
-            exit={direction === "right"  ? "exitToLeft"    : "exitToRight"}
-            transition={{
-              duration: 0.55,
-              ease: [0.22, 1, 0.36, 1],
-              opacity: { duration: 0.3 },
-            }}
-            className="calendar-page"
+            key={`${activeMonthIndex}-${activeYear}-${flipKey}`}
+            initial={direction === "right" ? pageVariants.enterRight : pageVariants.enterLeft}
+            animate={pageVariants.center}
+            exit={direction === "right" ? pageVariants.exitLeft : pageVariants.exitRight}
+            transition={pageTransition}
+            style={{ transformStyle: "preserve-3d" }}
           >
-            {/* Stack shadow layers (paper feel) */}
-            <div className="calendar-shadow-1" />
-            <div className="calendar-shadow-2" />
-
-            {/* The main calendar card */}
-            <div
+            {/* ─── The Calendar Card ────────────────────────────── */}
+            <motion.div
               className="relative rounded-2xl overflow-hidden"
+              initial={{ boxShadow: `0 4px 20px ${theme.colors.shadow}` }}
+              animate={{
+                boxShadow: `
+                  0 32px 80px ${theme.colors.shadow},
+                  0 12px 40px rgba(0,0,0,0.08),
+                  0 4px 12px rgba(0,0,0,0.05),
+                  inset 0 1px 0 rgba(255,255,255,0.6)
+                `,
+              }}
               style={{
                 background: theme.colors.paper,
-                boxShadow: `
-                  0 25px 80px ${theme.colors.shadow},
-                  0 8px 32px rgba(0,0,0,0.06),
-                  0 2px 8px rgba(0,0,0,0.04)
-                `,
-                border: `1px solid ${theme.colors.borderLight}`,
+                border: `1.5px solid ${theme.colors.borderLight}`,
               }}
             >
-              {/* Paper fold corner */}
-              <div className="paper-fold-edge" />
-
               {/* Spiral binding */}
-              <SpiralBinding color={theme.colors.border} />
+              <SpiralBinding color={theme.colors.border} accent={theme.colors.accent} />
 
               {/* Hero section */}
               <HeroSection
@@ -203,9 +253,9 @@ export default function CalendarPage() {
                 year={activeYear}
               />
 
-              {/* Main content */}
+              {/* Main content area */}
               <div className="flex flex-col lg:flex-row relative">
-                {/* Easter eggs */}
+                {/* Easter eggs layer */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <EasterEggs theme={theme} />
                 </div>
@@ -246,8 +296,8 @@ export default function CalendarPage() {
                   year={activeYear}
                   noteContent={note?.content ?? ""}
                   selectedRange={selectedRange}
-                  onPrevMonth={goToPrevMonth}
-                  onNextMonth={goToNextMonth}
+                  onPrevMonth={handlePrev}
+                  onNextMonth={handleNext}
                   onOpenNote={openNoteDialog}
                   onClearSelection={clearSelection}
                 />
@@ -259,34 +309,74 @@ export default function CalendarPage() {
                 style={{ borderTop: `1px solid ${theme.colors.borderLight}` }}
               >
                 <motion.button
-                  onClick={goToPrevMonth}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  onClick={handlePrev}
+                  whileHover={{ scale: 1.06, x: -2 }}
+                  whileTap={{ scale: 0.94 }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold"
-                  style={{ border: `1.5px solid ${theme.colors.border}`, color: theme.colors.inkLight }}
+                  style={{
+                    border: `1.5px solid ${theme.colors.border}`,
+                    color: theme.colors.inkLight,
+                    fontFamily: "'Josefin Sans', sans-serif",
+                    letterSpacing: "0.08em",
+                  }}
                 >
-                  <ChevronLeft size={13} /> Prev
+                  <ChevronLeft size={13} /> PREV
                 </motion.button>
 
                 <button
                   onClick={openNoteDialog}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider"
-                  style={{ background: theme.colors.headerBg, color: theme.colors.headerText }}
+                  style={{
+                    background: theme.colors.headerBg,
+                    color: theme.colors.headerText,
+                    fontFamily: "'Josefin Sans', sans-serif",
+                    letterSpacing: "0.15em",
+                  }}
                 >
                   <Pencil size={11} /> Notes
                 </button>
 
                 <motion.button
-                  onClick={goToNextMonth}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  onClick={handleNext}
+                  whileHover={{ scale: 1.06, x: 2 }}
+                  whileTap={{ scale: 0.94 }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold"
-                  style={{ border: `1.5px solid ${theme.colors.border}`, color: theme.colors.inkLight }}
+                  style={{
+                    border: `1.5px solid ${theme.colors.border}`,
+                    color: theme.colors.inkLight,
+                    fontFamily: "'Josefin Sans', sans-serif",
+                    letterSpacing: "0.08em",
+                  }}
                 >
-                  Next <ChevronRight size={13} />
+                  NEXT <ChevronRight size={13} />
                 </motion.button>
               </div>
-            </div>
+
+              {/* Subtle inner paper texture */}
+              <div
+                className="absolute inset-0 pointer-events-none rounded-2xl opacity-[0.015]"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")`,
+                  zIndex: 50,
+                }}
+              />
+            </motion.div>
+
+            {/* ─── Paper shadow layers beneath card ─────────────── */}
+            <div
+              className="absolute inset-x-3 -bottom-2 h-6 rounded-b-2xl -z-10 opacity-20"
+              style={{
+                background: theme.colors.accent,
+                filter: "blur(10px)",
+              }}
+            />
+            <div
+              className="absolute inset-x-6 -bottom-4 h-6 rounded-b-2xl -z-20 opacity-10"
+              style={{
+                background: theme.colors.border,
+                filter: "blur(18px)",
+              }}
+            />
           </motion.div>
         </AnimatePresence>
       </div>

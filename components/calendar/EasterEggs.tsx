@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { FilmTheme } from "@/types/theme";
 
@@ -7,109 +8,59 @@ interface EasterEggsProps {
   theme: FilmTheme;
 }
 
-// Theme-specific decorative elements (bullet holes, blood stains, etc.)
-function ThematicDecor({ theme }: { theme: FilmTheme }) {
-  if (theme.id === "gow" || theme.id === "satya") {
-    return (
-      <>
-        {/* Bullet holes */}
-        {[
-          { x: "8%",  y: "15%", size: 10, opacity: 0.35 },
-          { x: "92%", y: "22%", size: 7,  opacity: 0.28 },
-          { x: "5%",  y: "75%", size: 12, opacity: 0.3  },
-        ].map((hole, i) => (
-          <div
-            key={i}
-            className="bullet-hole absolute"
-            style={{
-              left: hole.x,
-              top: hole.y,
-              width: hole.size,
-              height: hole.size,
-              opacity: hole.opacity,
-            }}
-          />
-        ))}
-        {/* Radiating crack lines from one bullet */}
-        <svg
-          className="absolute pointer-events-none"
-          style={{ left: "8%", top: "15%", width: 40, height: 40, opacity: 0.15 }}
-          viewBox="0 0 40 40"
-        >
-          <line x1="20" y1="20" x2="0"  y2="5"  stroke={theme.colors.ink} strokeWidth="0.8"/>
-          <line x1="20" y1="20" x2="40" y2="8"  stroke={theme.colors.ink} strokeWidth="0.8"/>
-          <line x1="20" y1="20" x2="35" y2="38" stroke={theme.colors.ink} strokeWidth="0.8"/>
-          <line x1="20" y1="20" x2="5"  y2="38" stroke={theme.colors.ink} strokeWidth="0.8"/>
-        </svg>
-      </>
-    );
-  }
-
-  if (theme.id === "devdas") {
-    // Rose petals watermark
-    return (
-      <div
-        className="absolute bottom-12 right-4 pointer-events-none select-none text-[48px] opacity-[0.06]"
-        style={{ transform: "rotate(-15deg)", filter: "grayscale(50%)" }}
-      >
-        🌹
-      </div>
-    );
-  }
-
-  if (theme.id === "bajirao") {
-    // Crossed swords watermark
-    return (
-      <div
-        className="absolute top-8 right-6 pointer-events-none select-none text-[56px] opacity-[0.06]"
-        style={{ transform: "rotate(20deg)" }}
-      >
-        ⚔️
-      </div>
-    );
-  }
-
-  if (theme.id === "lagaan") {
-    return (
-      <div
-        className="absolute bottom-8 left-4 pointer-events-none select-none text-[52px] opacity-[0.07]"
-        style={{ transform: "rotate(-8deg)" }}
-      >
-        🏏
-      </div>
-    );
-  }
-
-  return null;
-}
+const POSITION_CLASSES: Record<string, string> = {
+  "bottom-left":  "absolute bottom-3 left-4",
+  "bottom-right": "absolute bottom-3 right-4",
+  "top-left":     "absolute top-2 left-4",
+  "top-right":    "absolute top-2 right-4",
+  "center":       "absolute bottom-8 left-1/2 -translate-x-1/2",
+};
 
 export function EasterEggs({ theme }: EasterEggsProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 600);
+    return () => clearTimeout(t);
+  }, [theme.id]);
+
+  // Reset on theme change
+  useEffect(() => {
+    setMounted(false);
+    const t = setTimeout(() => setMounted(true), 700);
+    return () => clearTimeout(t);
+  }, [theme.id]);
+
+  if (!mounted) return null;
+
   return (
     <>
-      {/* Thematic decorations per film */}
-      <ThematicDecor theme={theme} />
-
-      {/* Dialogue / symbol easter eggs */}
       {theme.easterEggs.map((egg, i) => {
-        const positionStyle: React.CSSProperties = {
-          "bottom-left":  { position: "absolute", bottom: "0.5rem",  left:  "1rem"              },
-          "bottom-right": { position: "absolute", bottom: "0.5rem",  right: "1rem"              },
-          "top-left":     { position: "absolute", top:    "3rem",    left:  "1rem"              },
-          "top-right":    { position: "absolute", top:    "3rem",    right: "1rem"              },
-          "center":       { position: "absolute", bottom: "2rem",    left:  "50%", transform: "translateX(-50%)" },
-        }[egg.position] as React.CSSProperties;
+        const posClass = POSITION_CLASSES[egg.position] ?? POSITION_CLASSES["bottom-left"];
 
         if (egg.type === "dialogue") {
           return (
             <motion.div
-              key={i}
-              className="pointer-events-none select-none easter-egg-dialogue"
-              style={positionStyle}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 + i * 0.15, duration: 0.6 }}
+              key={`${theme.id}-egg-${i}`}
+              className={`${posClass} pointer-events-none select-none`}
+              initial={{ opacity: 0, x: egg.position.includes("right") ? 10 : -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 + i * 0.15, duration: 0.7, ease: "easeOut" }}
+              style={{ zIndex: 1 }}
             >
-              &ldquo;{egg.content}&rdquo;
+              <p
+                style={{
+                  color: theme.colors.inkLight,
+                  fontFamily: "'Kalam', cursive",
+                  fontSize: "9px",
+                  maxWidth: "170px",
+                  opacity: 0.5,
+                  lineHeight: 1.5,
+                  transform: `rotate(${egg.position.includes("right") ? "1.5deg" : "-1deg"})`,
+                }}
+              >
+                &ldquo;{egg.content}&rdquo;
+              </p>
             </motion.div>
           );
         }
@@ -117,18 +68,31 @@ export function EasterEggs({ theme }: EasterEggsProps) {
         if (egg.type === "symbol") {
           return (
             <motion.div
-              key={i}
-              className="pointer-events-none select-none"
-              style={{ ...positionStyle }}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.0 + i * 0.15, type: "spring", stiffness: 200, damping: 15 }}
+              key={`${theme.id}-egg-${i}`}
+              className={`${posClass} pointer-events-none select-none`}
+              initial={{ opacity: 0, scale: 0.5, rotate: -15 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{
+                delay: 0.2 + i * 0.18,
+                type: "spring",
+                stiffness: 180,
+                damping: 14,
+              }}
+              style={{ zIndex: 1 }}
             >
               <motion.span
-                className="text-2xl block"
-                animate={{ rotate: [0, 8, -8, 0], y: [0, -4, 0] }}
-                transition={{ duration: 4, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
-                style={{ opacity: 0.25, filter: "grayscale(20%)" }}
+                className="block text-2xl md:text-3xl"
+                animate={{
+                  y:      [0, -5, 0, -3, 0],
+                  rotate: [0, 6, -4, 3, 0],
+                }}
+                transition={{
+                  duration: 5 + i * 1.2,
+                  repeat: Infinity,
+                  repeatDelay: 2 + i,
+                  ease: "easeInOut",
+                }}
+                style={{ opacity: 0.28, filter: "grayscale(20%)" }}
               >
                 {egg.content}
               </motion.span>
@@ -136,47 +100,70 @@ export function EasterEggs({ theme }: EasterEggsProps) {
           );
         }
 
+        if (egg.type === "stamp") {
+          return (
+            <motion.div
+              key={`${theme.id}-egg-${i}`}
+              className={`${posClass} pointer-events-none select-none`}
+              initial={{ opacity: 0, scale: 1.6, rotate: -8 }}
+              animate={{ opacity: 1, scale: 1, rotate: -3 }}
+              transition={{
+                delay: 0.3 + i * 0.2,
+                type: "spring",
+                stiffness: 300,
+                damping: 20,
+              }}
+              style={{ zIndex: 1 }}
+            >
+              <div
+                className="px-2 py-1 border-2 rounded"
+                style={{
+                  borderColor: theme.colors.accent,
+                  color: theme.colors.accent,
+                  fontSize: "8px",
+                  fontFamily: "'Josefin Sans', sans-serif",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                  opacity: 0.4,
+                  transform: "rotate(-4deg)",
+                }}
+              >
+                {egg.content}
+              </div>
+            </motion.div>
+          );
+        }
+
         return null;
       })}
 
-      {/* Film title watermark behind the grid */}
+      {/* Watermark short title behind grid */}
       <div
-        className="absolute bottom-16 right-2 pointer-events-none select-none hidden lg:block"
+        className="absolute bottom-12 right-2 pointer-events-none select-none hidden lg:block"
         style={{ zIndex: 0 }}
       >
         <p
-          className="text-[32px] leading-tight font-bold italic"
           style={{
-            fontFamily: "var(--f-display)",
             color: theme.colors.accent,
-            opacity: 0.045,
-            transform: "rotate(-3deg)",
-            maxWidth: "210px",
+            fontFamily: theme.id === "mughal-e-azam" || theme.id === "bajirao" || theme.id === "devdas"
+              ? "'Cormorant Garamond', Georgia, serif"
+              : theme.id === "kkhh" || theme.id === "satya"
+              ? "'Bebas Neue', sans-serif"
+              : "'Playfair Display', Georgia, serif",
+            fontSize: "clamp(22px, 3vw, 36px)",
+            fontWeight: 700,
+            fontStyle: "italic",
+            opacity: 0.032,
+            transform: "rotate(-5deg)",
+            maxWidth: "200px",
             textAlign: "right",
+            lineHeight: 1.1,
+            whiteSpace: "pre-line",
           }}
         >
           {theme.shortTitle}
         </p>
       </div>
-
-      {/* Subtle ink stamp / seal in corner */}
-      <motion.div
-        className="absolute top-2 left-2 pointer-events-none select-none hidden lg:block"
-        initial={{ opacity: 0, rotate: -20 }}
-        animate={{ opacity: 0.08, rotate: -15 }}
-        transition={{ delay: 1.2, duration: 0.5 }}
-      >
-        <div
-          className="text-[9px] font-bold uppercase tracking-[0.3em] border rounded-full px-2 py-1"
-          style={{
-            color: theme.colors.accent,
-            borderColor: theme.colors.accent,
-            fontFamily: "var(--f-oswald, var(--f-display))",
-          }}
-        >
-          {theme.year}
-        </div>
-      </motion.div>
     </>
   );
 }

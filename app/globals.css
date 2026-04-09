@@ -1,22 +1,11 @@
+/* ─── Cinematic Google Fonts ─── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&family=Teko:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;600;700;900&family=Kalam:wght@300;400;700&family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Source+Sans+3:wght@300;400;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cinzel:wght@400;500;600;700;900&family=Josefin+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Righteous&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* ─── Font family helpers (referencing next/font CSS variables) ─── */
+/* ─── CSS Custom Properties ─── */
 :root {
-  /* Convenience shorthands so components can write font-family: var(--f-display) etc. */
-  --f-serif:    var(--font-crimson),   Georgia, serif;
-  --f-display:  var(--font-playfair),  Georgia, serif;
-  --f-garamond: var(--font-garamond),  Georgia, serif;
-  --f-sans:     var(--font-barlow),    system-ui, sans-serif;
-  --f-cond:     var(--font-barlow-condensed), sans-serif;
-  --f-oswald:   var(--font-oswald),    sans-serif;
-  --f-bebas:    var(--font-bebas),     sans-serif;
-  --f-nunito:   var(--font-nunito),    sans-serif;
-  --f-raleway:  var(--font-raleway),   sans-serif;
-  --f-notes:    var(--font-kalam),     cursive;
-  --f-lora:     var(--font-lora),      Georgia, serif;
-
-  /* Calendar CSS variable fallbacks (overridden per-theme by injectTheme) */
   --paper: #fdf8f0;
   --paper-alt: #faf3e8;
   --ink: #2d1f0a;
@@ -30,26 +19,48 @@
   --shadow: rgba(139,105,64,0.15);
   --header-bg: #c8860a;
   --header-text: #fdf8f0;
+
+  /* Page stack variables */
+  --stack-offset-1: 4px;
+  --stack-offset-2: 8px;
+  --stack-rot-1: 0.8deg;
+  --stack-rot-2: 1.6deg;
 }
 
-/* ─── Base reset ─── */
+/* ─── Base Reset ─── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--paper-alt);
   color: var(--ink);
-  font-family: var(--f-lora);
+  font-family: 'Lora', 'Georgia', serif;
   overflow-x: hidden;
-  transition: background-color 0.7s ease, color 0.5s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s ease;
 }
 
-html { scroll-behavior: smooth; }
+/* ─── Smooth property transitions (not layout) ─── */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, opacity, box-shadow;
+  transition-duration: 0.35s;
+  transition-timing-function: ease;
+}
+
+button, a, input, textarea {
+  transition-property: background-color, border-color, color, opacity, transform, box-shadow;
+  transition-duration: 0.18s;
+}
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -58,90 +69,223 @@ html { scroll-behavior: smooth; }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink-light); }
 
 /* ─── Selection ─── */
-::selection { background-color: var(--accent-soft); color: var(--ink); }
-
-/* ─── Textarea ─── */
-textarea { outline: none !important; box-shadow: none !important; resize: none; }
-
-/* ─── GSAP / page-flip utility ─── */
-.calendar-wrapper { perspective: 1400px; }
-.calendar-page    { transform-style: preserve-3d; will-change: transform, opacity; }
-
-/* Page stack shadow layers */
-.calendar-shadow-1 {
-  position: absolute;
-  inset-x: 1rem;
-  bottom: -0.5rem;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--paper-alt);
-  box-shadow: 0 6px 20px var(--shadow);
-  z-index: -1;
-  transform: rotate(0.4deg);
-}
-.calendar-shadow-2 {
-  position: absolute;
-  inset-x: 1.5rem;
-  bottom: -1rem;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--border-light);
-  box-shadow: 0 4px 12px var(--shadow);
-  z-index: -2;
-  transform: rotate(-0.6deg);
+::selection {
+  background-color: var(--accent-soft);
+  color: var(--ink);
 }
 
-/* Paper texture grain overlay */
-.paper-grain {
-  pointer-events: none;
-  position: fixed;
+/* ─── Textarea reset ─── */
+textarea {
+  outline: none !important;
+  box-shadow: none !important;
+  resize: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAPER STACK / PAGE TURN ANIMATIONS
+═══════════════════════════════════════════════════════════ */
+
+/* Paper behind-layers (stack effect) */
+.calendar-stack-wrapper {
+  position: relative;
+}
+
+/* Layer 3 — bottom of stack */
+.calendar-stack-wrapper::before {
+  content: '';
+  position: absolute;
   inset: 0;
-  z-index: 0;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)'/%3E%3C/svg%3E");
+  border-radius: 16px;
+  background: var(--paper-alt);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.06),
+    0 1px 3px rgba(0,0,0,0.04);
+  transform: translateY(var(--stack-offset-2)) rotate(var(--stack-rot-2));
+  transform-origin: bottom center;
+  z-index: -2;
+  border: 1px solid var(--border-light);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.8s ease;
 }
 
-/* Paper fold edge effect */
-.paper-fold-edge {
+/* Layer 2 — middle of stack */
+.calendar-stack-wrapper::after {
+  content: '';
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(225deg, var(--paper-alt) 50%, transparent 50%);
-  box-shadow: -2px -2px 4px var(--shadow);
-  border-radius: 0 0 4px 0;
-  pointer-events: none;
+  inset: 0;
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.07),
+    0 2px 6px rgba(0,0,0,0.04);
+  transform: translateY(var(--stack-offset-1)) rotate(var(--stack-rot-1));
+  transform-origin: bottom center;
+  z-index: -1;
+  border: 1px solid var(--border-light);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.8s ease;
 }
 
-/* ─── Easter egg styles ─── */
-.easter-egg-dialogue {
-  font-family: var(--f-serif);
-  font-style: italic;
-  opacity: 0.3;
-  font-size: 0.6rem;
-  line-height: 1.4;
-  max-width: 160px;
-  pointer-events: none;
-  user-select: none;
-  color: var(--ink-light);
-  transition: opacity 0.3s;
+/* On month change hover effect */
+.calendar-stack-wrapper:hover::before {
+  transform: translateY(calc(var(--stack-offset-2) + 2px)) rotate(calc(var(--stack-rot-2) * 1.2));
 }
-.easter-egg-dialogue:hover { opacity: 0.7; }
+.calendar-stack-wrapper:hover::after {
+  transform: translateY(calc(var(--stack-offset-1) + 1px)) rotate(calc(var(--stack-rot-1) * 1.2));
+}
 
-/* Blood / bullet hole decorative elements */
-.bullet-hole {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, #1a0000 0%, #3d0000 40%, transparent 70%);
-  box-shadow: 0 0 8px rgba(0,0,0,0.4), inset 0 0 4px rgba(0,0,0,0.6);
-  pointer-events: none;
+/* ─── Page flip keyframes ─── */
+@keyframes pageFlipOut {
+  0%   { opacity: 1; transform: perspective(1200px) rotateY(0deg) translateX(0) scale(1); }
+  40%  { opacity: 0.6; transform: perspective(1200px) rotateY(-25deg) translateX(-5%) scale(0.97); }
+  100% { opacity: 0; transform: perspective(1200px) rotateY(-40deg) translateX(-8%) scale(0.94); }
+}
+
+@keyframes pageFlipIn {
+  0%   { opacity: 0; transform: perspective(1200px) rotateY(20deg) translateX(6%) scale(0.95); }
+  60%  { opacity: 0.8; transform: perspective(1200px) rotateY(-3deg) translateX(-1%) scale(1.005); }
+  100% { opacity: 1; transform: perspective(1200px) rotateY(0deg) translateX(0) scale(1); }
+}
+
+@keyframes pageFlipOutReverse {
+  0%   { opacity: 1; transform: perspective(1200px) rotateY(0deg) translateX(0) scale(1); }
+  40%  { opacity: 0.6; transform: perspective(1200px) rotateY(25deg) translateX(5%) scale(0.97); }
+  100% { opacity: 0; transform: perspective(1200px) rotateY(40deg) translateX(8%) scale(0.94); }
+}
+
+@keyframes pageFlipInReverse {
+  0%   { opacity: 0; transform: perspective(1200px) rotateY(-20deg) translateX(-6%) scale(0.95); }
+  60%  { opacity: 0.8; transform: perspective(1200px) rotateY(3deg) translateX(1%) scale(1.005); }
+  100% { opacity: 1; transform: perspective(1200px) rotateY(0deg) translateX(0) scale(1); }
+}
+
+/* Paper texture noise animation */
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10%  { transform: translate(-2%, -3%); }
+  20%  { transform: translate(3%, 2%); }
+  30%  { transform: translate(-1%, 4%); }
+  40%  { transform: translate(2%, -1%); }
+  50%  { transform: translate(-3%, 1%); }
+  60%  { transform: translate(1%, 3%); }
+  70%  { transform: translate(3%, -2%); }
+  80%  { transform: translate(-2%, 2%); }
+  90%  { transform: translate(1%, -3%); }
+}
+
+/* Film grain overlay animation */
+.film-grain-overlay {
+  animation: grain 0.4s steps(1) infinite;
+}
+
+/* ─── Golden date pulse ─── */
+@keyframes starPulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  33%  { transform: scale(1.4) rotate(15deg); opacity: 0.8; }
+  66%  { transform: scale(1.2) rotate(-10deg); opacity: 0.9; }
+}
+
+/* ─── Projector flicker on entry ─── */
+@keyframes projectorFlicker {
+  0%   { opacity: 1; }
+  5%   { opacity: 0.1; }
+  10%  { opacity: 1; }
+  15%  { opacity: 0.4; }
+  20%  { opacity: 1; }
+  45%  { opacity: 0.7; }
+  50%  { opacity: 1; }
+  75%  { opacity: 0.9; }
+  100% { opacity: 1; }
+}
+
+.projector-enter {
+  animation: projectorFlicker 0.6s ease-in-out forwards;
+}
+
+/* ─── Ink reveal animation ─── */
+@keyframes inkReveal {
+  0%   { opacity: 0; transform: translateY(12px) skewY(1deg); }
+  100% { opacity: 1; transform: translateY(0) skewY(0deg); }
+}
+
+.ink-reveal {
+  animation: inkReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ─── Stamp press ─── */
+@keyframes stampPress {
+  0%   { transform: scale(1.5) rotate(-3deg); opacity: 0; }
+  60%  { transform: scale(0.95) rotate(0.5deg); opacity: 1; }
+  80%  { transform: scale(1.02) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ─── Easter egg float ─── */
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33%  { transform: translateY(-6px) rotate(2deg); }
+  66%  { transform: translateY(-3px) rotate(-1deg); }
+}
+
+@keyframes gentleRotate {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(5deg) scale(1.05); }
+  75%  { transform: rotate(-4deg) scale(0.97); }
+}
+
+@keyframes dialogueFade {
+  0%   { opacity: 0; transform: translateX(-8px); }
+  100% { opacity: 0.55; transform: translateX(0); }
+}
+
+/* ─── Calendar day cell hover ─── */
+@keyframes cellPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.15); }
+  100% { transform: scale(1.1); }
+}
+
+/* ─── Reel strip decorative ─── */
+@keyframes reelScroll {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 -40px; }
 }
 
 /* ─── Responsive adjustments ─── */
 @media (max-width: 640px) {
-  .calendar-day-cell { min-height: 36px !important; }
+  .calendar-day-cell {
+    min-height: 36px !important;
+  }
 }
+
 @media (max-width: 400px) {
-  .calendar-day-cell { min-height: 32px !important; }
+  .calendar-day-cell {
+    min-height: 32px !important;
+  }
+}
+
+/* ─── Paper fold edge shadow ─── */
+.paper-fold-shadow {
+  box-shadow:
+    inset 0 -3px 6px rgba(0,0,0,0.08),
+    inset 3px 0 6px rgba(0,0,0,0.04);
+}
+
+/* ─── Film perforation strip ─── */
+.film-strip-left,
+.film-strip-right {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 10px,
+    rgba(0,0,0,0.08) 10px,
+    rgba(0,0,0,0.08) 16px,
+    transparent 16px,
+    transparent 22px
+  );
+  animation: reelScroll 2s linear infinite;
+  animation-play-state: paused;
+}
+
+.calendar-stack-wrapper:hover .film-strip-left,
+.calendar-stack-wrapper:hover .film-strip-right {
+  animation-play-state: running;
 }

@@ -11,7 +11,7 @@ interface NotePreviewProps {
 }
 
 export function NotePreview({ content, theme, onEdit }: NotePreviewProps) {
-  const preview = content.length > 80 ? content.slice(0, 80) + "..." : content;
+  const preview = content.length > 90 ? content.slice(0, 90) + "…" : content;
 
   return (
     <AnimatePresence>
@@ -28,10 +28,10 @@ export function NotePreview({ content, theme, onEdit }: NotePreviewProps) {
             style={{
               background: theme.colors.paperAlt,
               border: `1px dashed ${theme.colors.border}`,
-              boxShadow: `0 2px 8px ${theme.colors.shadow}`,
+              boxShadow: `0 2px 10px ${theme.colors.shadow}`,
             }}
           >
-            {/* Lined paper lines */}
+            {/* Lined paper */}
             <div
               className="absolute inset-0 pointer-events-none opacity-30"
               style={{
@@ -49,8 +49,14 @@ export function NotePreview({ content, theme, onEdit }: NotePreviewProps) {
             <div className="relative">
               <div className="flex items-start justify-between mb-1.5 gap-2">
                 <p
-                  className="text-[8px] uppercase tracking-widest font-bold"
-                  style={{ color: theme.colors.accent }}
+                  style={{
+                    fontFamily: "'Josefin Sans', sans-serif",
+                    fontSize: "7px",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.2em",
+                    fontWeight: 700,
+                    color: theme.colors.accent,
+                  }}
                 >
                   ✦ Month Notes
                 </p>
@@ -60,8 +66,9 @@ export function NotePreview({ content, theme, onEdit }: NotePreviewProps) {
                 />
               </div>
               <p
-                className="text-[10px] leading-relaxed"
                 style={{
+                  fontSize: "10px",
+                  lineHeight: 1.6,
                   color: theme.colors.ink,
                   fontFamily: "'Kalam', cursive",
                 }}

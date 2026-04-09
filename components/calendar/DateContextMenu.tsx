@@ -33,12 +33,11 @@ export function DateContextMenu({
     return () => document.removeEventListener("click", handleClick);
   }, [onClose]);
 
-  // Clamp position so menu stays in viewport
   const x = typeof window !== "undefined"
-    ? Math.min(pos.x, window.innerWidth - 200)
+    ? Math.min(pos.x, window.innerWidth - 210)
     : pos.x;
   const y = typeof window !== "undefined"
-    ? Math.min(pos.y, window.innerHeight - 120)
+    ? Math.min(pos.y, window.innerHeight - 130)
     : pos.y;
 
   const dateLabel = date.toLocaleDateString("en-IN", {
@@ -46,6 +45,13 @@ export function DateContextMenu({
     month: "short",
     day: "numeric",
   });
+
+  const menuItemStyle = {
+    fontFamily: "'Josefin Sans', sans-serif",
+    fontSize: "11px",
+    letterSpacing: "0.04em",
+    color: theme.colors.ink,
+  };
 
   return (
     <AnimatePresence>
@@ -57,26 +63,37 @@ export function DateContextMenu({
           top: y,
           background: theme.colors.paper,
           border: `1.5px solid ${theme.colors.border}`,
-          boxShadow: `0 12px 40px ${theme.colors.shadow}, 0 4px 16px rgba(0,0,0,0.1)`,
-          minWidth: 180,
+          boxShadow: `0 16px 48px ${theme.colors.shadow}, 0 4px 16px rgba(0,0,0,0.12)`,
+          minWidth: 190,
         }}
-        initial={{ opacity: 0, scale: 0.88, y: -8 }}
+        initial={{ opacity: 0, scale: 0.85, y: -10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: -4 }}
-        transition={{ duration: 0.14, ease: "easeOut" }}
+        exit={{ opacity: 0, scale: 0.9, y: -6 }}
+        transition={{ duration: 0.16, ease: "easeOut" }}
       >
+        {/* Date header */}
         <div
           className="px-3 py-2"
           style={{ borderBottom: `1px solid ${theme.colors.borderLight}` }}
         >
-          <p className="text-[9px] font-semibold truncate" style={{ color: theme.colors.inkLight }}>
+          <p
+            style={{
+              fontFamily: "'Josefin Sans', sans-serif",
+              fontSize: "8px",
+              letterSpacing: "0.15em",
+              textTransform: "uppercase",
+              fontWeight: 700,
+              color: theme.colors.inkLight,
+            }}
+          >
             {dateLabel}
           </p>
         </div>
 
+        {/* Mark date */}
         <button
-          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[12px] hover:opacity-70 transition-opacity text-left"
-          style={{ color: theme.colors.ink }}
+          className="w-full flex items-center gap-3 px-3 py-2.5 hover:opacity-70 transition-opacity text-left"
+          style={menuItemStyle}
           onClick={(e) => {
             e.stopPropagation();
             onMark();
@@ -85,15 +102,18 @@ export function DateContextMenu({
         >
           <Star
             size={13}
-            style={{ color: theme.colors.gold }}
-            fill={isMarked ? theme.colors.gold : "none"}
+            style={{
+              color: theme.colors.gold,
+              fill: isMarked ? theme.colors.gold : "none",
+            }}
           />
           {isMarked ? "Unmark this date" : "Mark this date"}
         </button>
 
+        {/* Add note */}
         <button
-          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-[12px] hover:opacity-70 transition-opacity text-left"
-          style={{ color: theme.colors.ink }}
+          className="w-full flex items-center gap-3 px-3 py-2.5 hover:opacity-70 transition-opacity text-left"
+          style={menuItemStyle}
           onClick={(e) => {
             e.stopPropagation();
             onNote();
