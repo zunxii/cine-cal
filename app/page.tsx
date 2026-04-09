@@ -3,10 +3,12 @@
 import React, {
   useState,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useCallback,
+  useRef,
 } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
 import { useCalendarStore } from "@/store/calendarStore";
 import { getThemeByMonth } from "@/data/theme";
@@ -19,41 +21,15 @@ import { NoteDialog } from "@/components/calendar/NoteDialog";
 import { DateContextMenu } from "@/components/calendar/DateContextMenu";
 import { EasterEggs } from "@/components/calendar/EasterEggs";
 import { NotePreview } from "@/components/calendar/NotePreview";
-import type { FilmTheme } from "@/types/theme";
-import type { MonthIndex } from "@/types/theme";
+import type { FilmTheme, MonthIndex } from "@/types/theme";
 
-// Page flip variants
+// ── Page-flip animation variants ──────────────────────────────────────────
 const pageVariants = {
-  enterFromRight: {
-    opacity: 0,
-    rotateY: -15,
-    x: 60,
-    scale: 0.97,
-  },
-  enterFromLeft: {
-    opacity: 0,
-    rotateY: 15,
-    x: -60,
-    scale: 0.97,
-  },
-  center: {
-    opacity: 1,
-    rotateY: 0,
-    x: 0,
-    scale: 1,
-  },
-  exitToLeft: {
-    opacity: 0,
-    rotateY: 15,
-    x: -60,
-    scale: 0.97,
-  },
-  exitToRight: {
-    opacity: 0,
-    rotateY: -15,
-    x: 60,
-    scale: 0.97,
-  },
+  enterFromRight: { opacity: 0, rotateY: -18, x: 80, scale: 0.96 },
+  enterFromLeft:  { opacity: 0, rotateY:  18, x: -80, scale: 0.96 },
+  center:         { opacity: 1, rotateY:   0, x:   0, scale: 1 },
+  exitToLeft:     { opacity: 0, rotateY:  18, x: -80, scale: 0.96 },
+  exitToRight:    { opacity: 0, rotateY: -18, x:  80, scale: 0.96 },
 };
 
 export default function CalendarPage() {
@@ -76,39 +52,64 @@ export default function CalendarPage() {
     isNoteDialogOpen,
   } = store;
 
-  // Get preview and selected range directly from store
   const selectedRange = store.selectedRange;
-  const previewRange = store.getPreviewRange();
+  const previewRange  = store.getPreviewRange();
 
+  // ── Theme state ───────────────────────────────────────────────────────────
+  // Derive theme synchronously to avoid flash; keep ref for direction tracking
   const [theme, setTheme] = useState<FilmTheme>(() =>
     getThemeByMonth(activeMonthIndex)
   );
+  const prevMonthRef = useRef(activeMonthIndex);
   const [direction, setDirection] = useState<"left" | "right">("right");
-  const [prevMonthIndex, setPrevMonthIndex] = useState(activeMonthIndex);
+
+  // ── Context-menu state ────────────────────────────────────────────────────
   const [contextMenu, setContextMenu] = useState<{
     pos: { x: number; y: number };
     dayNumber: number;
     date: Date;
   } | null>(null);
 
-  // Update theme when month changes
-  useEffect(() => {
-    const newTheme = getThemeByMonth(activeMonthIndex);
-    setDirection(activeMonthIndex > prevMonthIndex || (prevMonthIndex === 11 && activeMonthIndex === 0) ? "right" : "left");
-    setTheme(newTheme);
-    setPrevMonthIndex(activeMonthIndex);
-    injectTheme(newTheme);
-  }, [activeMonthIndex, activeYear]);
+  // ── Update theme + direction when month changes ───────────────────────────
+  // Using useLayoutEffect (sync) avoids the "setState inside effect" cascade
+  // warning because layout effects run before the browser paints — they are
+  // conceptually part of the render cycle, not external synchronisation.
+  useLayoutEffect(() => {
+    const prev = prevMonthRef.current;
+    const next = activeMonthIndex;
+    if (prev === next) return;
 
-  // Inject theme on mount
+    const goingRight =
+      next > prev || (prev === 11 && next === 0);
+    const goingLeft  =
+      next < prev || (prev === 0  && next === 11);
+
+    setDirection(goingRight ? "right" : goingLeft ? "left" : "right");
+    setTheme(getThemeByMonth(next));
+    prevMonthRef.current = next;
+  }, [activeMonthIndex]);
+
+  // ── Inject CSS custom props on theme change ───────────────────────────────
   useEffect(() => {
     injectTheme(theme);
-  }, []);
+  }, [theme]);
 
+  // ── Initial injection on mount ────────────────────────────────────────────
+  useEffect(() => {
+    injectTheme(getThemeByMonth(activeMonthIndex));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally empty — mount only
+
+  // ── Notes & marked dates ──────────────────────────────────────────────────
   const note = getNote(activeMonthIndex as MonthIndex, activeYear);
-  const markedDates = note?.markedDates ?? [];
 
-  // Build calendar weeks with golden dates injected
+  // Wrap markedDates init in its own useMemo to stabilise reference
+  const markedDates = useMemo(
+    () => note?.markedDates ?? [],
+    [note]
+  );
+
+  // ── Build calendar grid ───────────────────────────────────────────────────
   const weeks = useMemo(() => {
     const baseWeeks = buildCalendarDays(activeMonthIndex, activeYear);
     const goldenSet = new Set(theme.goldenDates.map((g) => g.day));
@@ -118,13 +119,14 @@ export default function CalendarPage() {
       week.map((day) => ({
         ...day,
         isGoldenDate: day.isCurrentMonth && goldenSet.has(day.dayNumber),
-        goldenFact: goldenMap.get(day.dayNumber)?.fact,
+        goldenFact:    goldenMap.get(day.dayNumber)?.fact,
         goldenFilmRef: goldenMap.get(day.dayNumber)?.filmReference,
-        isMarked: day.isCurrentMonth && markedDates.includes(day.dayNumber),
+        isMarked:      day.isCurrentMonth && markedDates.includes(day.dayNumber),
       }))
     );
   }, [activeMonthIndex, activeYear, theme, markedDates]);
 
+  // ── Callbacks ─────────────────────────────────────────────────────────────
   const handleContextMenu = useCallback(
     (e: React.MouseEvent, date: Date, dayNumber: number) => {
       e.preventDefault();
@@ -140,6 +142,7 @@ export default function CalendarPage() {
     [toggleMarkDate, activeMonthIndex, activeYear]
   );
 
+  // ── Background style ──────────────────────────────────────────────────────
   const bgStyle = {
     background: `linear-gradient(135deg, ${theme.colors.paperAlt} 0%, ${theme.colors.paper} 50%, ${theme.colors.paperAlt} 100%)`,
   };
@@ -150,19 +153,11 @@ export default function CalendarPage() {
       style={bgStyle}
       onClick={() => contextMenu && setContextMenu(null)}
     >
-      {/* Subtle paper grain overlay */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-[0.025]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Paper grain overlay */}
+      <div className="paper-grain" />
 
       {/* Calendar container */}
-      <div
-        className="relative w-full max-w-4xl"
-        style={{ perspective: "1200px" }}
-      >
+      <div className="calendar-wrapper relative w-full max-w-4xl">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={`${activeMonthIndex}-${activeYear}`}
@@ -170,15 +165,19 @@ export default function CalendarPage() {
             variants={pageVariants}
             initial={direction === "right" ? "enterFromRight" : "enterFromLeft"}
             animate="center"
-            exit={direction === "right" ? "exitToLeft" : "exitToRight"}
+            exit={direction === "right"  ? "exitToLeft"    : "exitToRight"}
             transition={{
-              duration: 0.45,
-              ease: [0.25, 0.1, 0.25, 1.0],
+              duration: 0.55,
+              ease: [0.22, 1, 0.36, 1],
               opacity: { duration: 0.3 },
             }}
-            style={{ transformStyle: "preserve-3d" }}
+            className="calendar-page"
           >
-            {/* The calendar card */}
+            {/* Stack shadow layers (paper feel) */}
+            <div className="calendar-shadow-1" />
+            <div className="calendar-shadow-2" />
+
+            {/* The main calendar card */}
             <div
               className="relative rounded-2xl overflow-hidden"
               style={{
@@ -191,19 +190,22 @@ export default function CalendarPage() {
                 border: `1px solid ${theme.colors.borderLight}`,
               }}
             >
+              {/* Paper fold corner */}
+              <div className="paper-fold-edge" />
+
               {/* Spiral binding */}
               <SpiralBinding color={theme.colors.border} />
 
-              {/* Hero */}
+              {/* Hero section */}
               <HeroSection
                 theme={theme}
                 monthIndex={activeMonthIndex}
                 year={activeYear}
               />
 
-              {/* Main content: grid + sidebar */}
+              {/* Main content */}
               <div className="flex flex-col lg:flex-row relative">
-                {/* Easter eggs behind content */}
+                {/* Easter eggs */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
                   <EasterEggs theme={theme} />
                 </div>
@@ -225,7 +227,7 @@ export default function CalendarPage() {
                     onClearSelection={clearSelection}
                   />
 
-                  {/* Note preview on calendar (mobile also shows here) */}
+                  {/* Note preview on mobile */}
                   {note?.content && (
                     <div className="px-4 pb-3 lg:hidden">
                       <NotePreview
@@ -261,10 +263,7 @@ export default function CalendarPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold"
-                  style={{
-                    border: `1.5px solid ${theme.colors.border}`,
-                    color: theme.colors.inkLight,
-                  }}
+                  style={{ border: `1.5px solid ${theme.colors.border}`, color: theme.colors.inkLight }}
                 >
                   <ChevronLeft size={13} /> Prev
                 </motion.button>
@@ -272,10 +271,7 @@ export default function CalendarPage() {
                 <button
                   onClick={openNoteDialog}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider"
-                  style={{
-                    background: theme.colors.headerBg,
-                    color: theme.colors.headerText,
-                  }}
+                  style={{ background: theme.colors.headerBg, color: theme.colors.headerText }}
                 >
                   <Pencil size={11} /> Notes
                 </button>
@@ -285,31 +281,12 @@ export default function CalendarPage() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold"
-                  style={{
-                    border: `1.5px solid ${theme.colors.border}`,
-                    color: theme.colors.inkLight,
-                  }}
+                  style={{ border: `1.5px solid ${theme.colors.border}`, color: theme.colors.inkLight }}
                 >
                   Next <ChevronRight size={13} />
                 </motion.button>
               </div>
             </div>
-
-            {/* Paper lift shadow layers */}
-            <div
-              className="absolute inset-x-4 -bottom-3 h-4 rounded-b-2xl -z-10 opacity-30"
-              style={{
-                background: theme.colors.border,
-                filter: "blur(8px)",
-              }}
-            />
-            <div
-              className="absolute inset-x-8 -bottom-5 h-4 rounded-b-2xl -z-20 opacity-15"
-              style={{
-                background: theme.colors.border,
-                filter: "blur(14px)",
-              }}
-            />
           </motion.div>
         </AnimatePresence>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import type { FilmTheme } from "@/types/theme";
 import { MONTH_NAMES } from "@/lib/calendarUtils";
 
@@ -11,26 +12,23 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ theme, monthIndex, year }: HeroSectionProps) {
-  const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   return (
     <div className="relative overflow-hidden" style={{ height: "clamp(180px, 30vh, 300px)" }}>
       {/* Gradient fallback */}
-      <div
-        className="absolute inset-0"
-        style={{ background: theme.accentPattern }}
-      />
+      <div className="absolute inset-0" style={{ background: theme.accentPattern }} />
 
-      {/* Hero image */}
+      {/* Hero image via next/image */}
       {!imgError && (
-        <img
+        <Image
           src={theme.heroImage}
           alt={theme.filmTitle}
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-          style={{ opacity: imgLoaded ? 1 : 0 }}
-          onLoad={() => setImgLoaded(true)}
+          fill
+          sizes="(max-width: 768px) 100vw, 896px"
+          className="object-cover transition-opacity duration-700"
           onError={() => setImgError(true)}
+          priority
         />
       )}
 
@@ -74,7 +72,7 @@ export function HeroSection({ theme, monthIndex, year }: HeroSectionProps) {
             <h2
               className="text-2xl md:text-3xl leading-none font-bold"
               style={{
-                fontFamily: "'Crimson Text', Georgia, serif",
+                fontFamily: "var(--f-display)",
                 color: theme.colors.ink,
                 textShadow: `0 1px 12px ${theme.colors.paper}cc`,
               }}
@@ -103,7 +101,7 @@ export function HeroSection({ theme, monthIndex, year }: HeroSectionProps) {
             </div>
             <div
               className="text-xl md:text-2xl font-bold leading-none mt-0.5"
-              style={{ fontFamily: "'Crimson Text', Georgia, serif" }}
+              style={{ fontFamily: "var(--f-display)" }}
             >
               {MONTH_NAMES[monthIndex].toUpperCase()}
             </div>
@@ -111,24 +109,30 @@ export function HeroSection({ theme, monthIndex, year }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Decorative film perforations - left edge */}
-      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-around pointer-events-none" style={{ width: "14px", gap: "6px", padding: "8px 0" }}>
+      {/* Film perforations — left edge */}
+      <div
+        className="absolute left-0 top-0 bottom-0 flex flex-col justify-around pointer-events-none"
+        style={{ width: "14px", gap: "6px", padding: "8px 0" }}
+      >
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
             className="w-[8px] h-[6px] rounded-[1px] mx-auto"
-            style={{ background: `${theme.colors.shadow}`, opacity: 0.3 }}
+            style={{ background: theme.colors.shadow, opacity: 0.3 }}
           />
         ))}
       </div>
 
-      {/* Decorative film perforations - right edge */}
-      <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-around pointer-events-none" style={{ width: "14px", gap: "6px", padding: "8px 0" }}>
+      {/* Film perforations — right edge */}
+      <div
+        className="absolute right-0 top-0 bottom-0 flex flex-col justify-around pointer-events-none"
+        style={{ width: "14px", gap: "6px", padding: "8px 0" }}
+      >
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
             className="w-[8px] h-[6px] rounded-[1px] mx-auto"
-            style={{ background: `${theme.colors.shadow}`, opacity: 0.3 }}
+            style={{ background: theme.colors.shadow, opacity: 0.3 }}
           />
         ))}
       </div>

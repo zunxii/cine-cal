@@ -5,13 +5,18 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { MonthIndex } from "@/types/theme";
 import type { DateRange, SelectionPhase, MonthNote } from "@/types/calendar";
 
-interface CalendarStore {
+// ── Persisted shape (only serializable data) ──────────────────────────────
+interface PersistedCalendarState {
   activeYear: number;
   activeMonthIndex: MonthIndex;
+  notes: Record<string, MonthNote>;
+}
+
+// ── Full store shape ───────────────────────────────────────────────────────
+interface CalendarStore extends PersistedCalendarState {
   selectedRange: DateRange;
   selectionPhase: SelectionPhase;
   hoveredDate: Date | null;
-  notes: Record<string, MonthNote>;
   isNoteDialogOpen: boolean;
 
   goToNextMonth: () => void;
@@ -45,14 +50,18 @@ const now = new Date();
 export const useCalendarStore = create<CalendarStore>()(
   persist(
     (set, get) => ({
+      // ── Persisted fields ──────────────────────────────────────────────────
       activeYear: now.getFullYear(),
       activeMonthIndex: now.getMonth() as MonthIndex,
-      selectedRange: { start: null, end: null },
-      selectionPhase: "idle" as SelectionPhase,
-      hoveredDate: null,
       notes: {},
+
+      // ── Transient fields (never persisted) ────────────────────────────────
+      selectedRange: { start: null, end: null } as DateRange,
+      selectionPhase: "idle" as SelectionPhase,
+      hoveredDate: null as Date | null,
       isNoteDialogOpen: false,
 
+      // ── Actions ───────────────────────────────────────────────────────────
       goToNextMonth: () => {
         const { activeMonthIndex, activeYear } = get();
         set({
@@ -86,7 +95,6 @@ export const useCalendarStore = create<CalendarStore>()(
         const { selectionPhase, selectedRange } = state;
 
         if (selectionPhase === "idle" || !selectedRange.start) {
-          // Start fresh selection
           set({
             selectedRange: { start: date, end: null },
             selectionPhase: "selecting-end",
@@ -95,11 +103,8 @@ export const useCalendarStore = create<CalendarStore>()(
           return;
         }
 
-        // We have a start, now pick end
         if (selectionPhase === "selecting-end" && selectedRange.start) {
           const start = selectedRange.start;
-
-          // Click same day = clear
           if (isSameDay(date, start)) {
             set({
               selectedRange: { start: null, end: null },
@@ -108,12 +113,8 @@ export const useCalendarStore = create<CalendarStore>()(
             });
             return;
           }
-
-          const startTime = start.getTime();
-          const endTime = date.getTime();
           const [finalStart, finalEnd] =
-            endTime >= startTime ? [start, date] : [date, start];
-
+            date.getTime() >= start.getTime() ? [start, date] : [date, start];
           set({
             selectedRange: { start: finalStart, end: finalEnd },
             selectionPhase: "idle",
@@ -123,8 +124,7 @@ export const useCalendarStore = create<CalendarStore>()(
       },
 
       handleDateHover: (date: Date | null) => {
-        const { selectionPhase } = get();
-        if (selectionPhase === "selecting-end") {
+        if (get().selectionPhase === "selecting-end") {
           set({ hoveredDate: date });
         }
       },
@@ -142,7 +142,6 @@ export const useCalendarStore = create<CalendarStore>()(
         const existing = get().notes[key];
         const markedDates = existing?.markedDates ?? [];
         const isMarked = markedDates.includes(day);
-
         set((state) => ({
           notes: {
             ...state.notes,
@@ -186,13 +185,16 @@ export const useCalendarStore = create<CalendarStore>()(
       },
 
       getNote: (monthIndex: MonthIndex, year: number) => {
-        const key = noteKey(monthIndex, year);
-        return get().notes[key] ?? null;
+        return get().notes[noteKey(monthIndex, year)] ?? null;
       },
 
       getPreviewRange: (): DateRange => {
         const { selectionPhase, selectedRange, hoveredDate } = get();
-        if (selectionPhase !== "selecting-end" || !selectedRange.start || !hoveredDate) {
+        if (
+          selectionPhase !== "selecting-end" ||
+          !selectedRange.start ||
+          !hoveredDate
+        ) {
           return selectedRange;
         }
         const start = selectedRange.start;
@@ -207,30 +209,32 @@ export const useCalendarStore = create<CalendarStore>()(
       closeNoteDialog: () => set({ isNoteDialogOpen: false }),
     }),
     {
-      name: "cinecalendar-v3",
+      name: "cinecalendar-v4",
       storage: createJSONStorage(() => {
-        if (typeof window === "undefined") return {
-          getItem: () => null,
-          setItem: () => {},
-          removeItem: () => {},
-        };
+        if (typeof window === "undefined") {
+          return {
+            getItem: () => null,
+            setItem: () => {},
+            removeItem: () => {},
+          };
+        }
         return localStorage;
       }),
-      partialize: (state) => ({
+      // Only persist serializable, non-transient fields
+      partialize: (state): PersistedCalendarState => ({
         notes: state.notes,
         activeMonthIndex: state.activeMonthIndex,
         activeYear: state.activeYear,
       }),
-      // Rehydrate dates properly
-      merge: (persistedState: unknown, currentState: CalendarStore) => {
-        const persisted = persistedState as Partial<CalendarStore> & {
-          notes?: Record<string, { monthIndex: MonthIndex; year: number; content: string; rangeLabel: string | null; markedDates: number[] }>;
-        };
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<PersistedCalendarState>;
         return {
           ...currentState,
-          ...(persisted || {}),
-          // Always reset selection state on load
-          selectedRange: { start: null, end: null },
+          notes: persisted?.notes ?? {},
+          activeMonthIndex: persisted?.activeMonthIndex ?? currentState.activeMonthIndex,
+          activeYear: persisted?.activeYear ?? currentState.activeYear,
+          // Always reset transient state on load
+          selectedRange: { start: null, end: null } as DateRange,
           selectionPhase: "idle" as SelectionPhase,
           hoveredDate: null,
           isNoteDialogOpen: false,

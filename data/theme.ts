@@ -314,7 +314,7 @@ export const FILM_THEMES: readonly FilmTheme[] = [
       headerBg: "#008090",
       headerText: "#f0fafa",
     },
-    heroImage: "/images/three-idiots.jpg",
+    heroImage: "/images/3idiots.jpg",
     accentPattern: "linear-gradient(135deg, #a8dde8 0%, #008090 100%)",
     goldenDates: [
       { day: 25, fact: "'All izz well' was added in post-production — the original script had no catchphrase.", filmReference: "3 Idiots (2009)" },
