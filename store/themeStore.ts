@@ -28,32 +28,12 @@ export function injectThemeCSSVars(theme: FilmTheme): void {
   if (typeof document === "undefined") return;
 
   const root = document.documentElement;
-  const { colors } = theme;
 
-  root.style.setProperty("--theme-bg", colors.bg);
-  root.style.setProperty("--theme-surface", colors.surface);
-  root.style.setProperty("--theme-accent", colors.accent);
-  root.style.setProperty("--theme-accent-alt", colors.accentAlt);
-  root.style.setProperty("--theme-text", colors.text);
-  root.style.setProperty("--theme-text-muted", colors.textMuted);
-  root.style.setProperty("--theme-border", colors.border);
-  root.style.setProperty("--theme-highlight", colors.highlight);
-  root.style.setProperty("--theme-hero-overlay", colors.heroOverlay);
-  root.style.setProperty("--theme-hero-gradient", theme.heroGradient);
-  root.style.setProperty("--theme-grayscale", theme.startsGrayscale ? "1" : "0");
-
-  const grainOpacity = { none: "0", subtle: "0.03", medium: "0.06", heavy: "0.12" }[theme.grain];
-  root.style.setProperty("--theme-grain-opacity", grainOpacity);
-
-  // Inject font vars
   const fonts = FONT_MAP[theme.id] ?? FONT_MAP.ddlj;
   root.style.setProperty("--font-display", `'${fonts.display}', serif`);
   root.style.setProperty("--font-body", `'${fonts.body}', sans-serif`);
   root.style.setProperty("--font-notes", `'${fonts.notes}', cursive`);
 
-  // Also update body background directly for smooth transition
-  document.body.style.backgroundColor = colors.bg;
-  document.body.style.color = colors.text;
 }
 
 const initialTheme = getThemeByMonth(new Date().getMonth() as MonthIndex);

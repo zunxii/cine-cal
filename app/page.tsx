@@ -7,7 +7,7 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, easeInOut } from "framer-motion";
 import { ChevronLeft, ChevronRight, Pencil } from "lucide-react";
 import { useCalendarStore } from "@/store/calendarStore";
 import { getThemeByMonth } from "@/data/theme";
@@ -64,7 +64,7 @@ const pageVariants = {
 
 const pageTransition = {
   duration: 0.52,
-  ease: [0.22, 1, 0.36, 1],
+  ease: easeInOut,
   opacity: { duration: 0.38 },
 };
 
